@@ -1,0 +1,29 @@
+[
+  {
+    "weekOf": "2026-10-19",
+    "topic": "Earnings season",
+    "q": "A company 'beats expectations' on earnings per share. What does that mean?",
+    "a": "Reported EPS came in above the average analyst estimate",
+    "w": ["EPS grew compared with the company's best-ever quarter", "The company beat its closest competitor's profits", "Revenue exceeded last year's revenue"],
+    "e": "'Beating' is measured against analysts' consensus, not last year. A stock can still fall on a beat if guidance disappoints.",
+    "flag": "PLACEHOLDER: replace with a real headline from this week before sending."
+  },
+  {
+    "weekOf": "2026-10-26",
+    "topic": "Soft landing",
+    "q": "Economists say the economy is headed for a 'soft landing.' What do they mean?",
+    "a": "Inflation cools without causing a recession",
+    "w": ["The stock market falls slowly over many months", "The central bank cuts rates to zero", "The housing market stops growing"],
+    "e": "A soft landing means slowing inflation without sharply raising unemployment. A hard landing is a recession.",
+    "flag": "PLACEHOLDER: swap for a current event on Monday."
+  },
+  {
+    "weekOf": "2026-11-02",
+    "topic": "Layoffs and stock prices",
+    "q": "A company announces layoffs and its stock rises. What's the most plausible reason?",
+    "a": "Investors expect lower costs to improve future profit",
+    "w": ["Investors think layoffs always mean higher revenue", "Laid-off workers will buy more shares", "Layoffs are a legal requirement before an IPO"],
+    "e": "Markets often reward cost cuts in the short run, even though layoffs can hurt morale and long-term capacity.",
+    "flag": "PLACEHOLDER: swap for a current event on Monday."
+  }
+]
