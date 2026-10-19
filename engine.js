@@ -1,5 +1,5 @@
-import QUESTIONS from '../data/questions.json';
-import WEEKLY from '../data/weekly.json';
+import QUESTIONS from './questions.json';
+import WEEKLY from './weekly.json';
 
 export const TRACKS = {
   accounting: { label: 'Accounting', blurb: 'Statements, debits and credits, GAAP' },

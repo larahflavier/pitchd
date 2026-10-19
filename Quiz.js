@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import Mascot from './Mascot';
-import { byId, shuffle, CAT_LABELS } from '../lib/engine';
+import { byId, shuffle, CAT_LABELS } from './engine';
 
 const RIGHT_LINES = ['Nice one!', 'That\'s it!', 'Locked in.', 'Correct!', 'You got it.'];
 const WRONG_LINES = ['Close. This one comes back soon.', 'No worries, I\'ll save it for later.', 'Good to see now, not in the interview.'];

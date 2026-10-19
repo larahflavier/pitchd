@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import Quiz from '../components/Quiz';
-import { Onboarding, Home, Summary, Review, Progress } from '../components/Screens';
+import Quiz from '../Quiz';
+import { Onboarding, Home, Summary, Review, Progress } from '../Screens';
 import {
   TRACKS, loadState, saveState, resetState, ensureToday, buildSet, dueIds, currentWeekly,
   recordAnswer, completeDaily, byId, SET_SIZE,
-} from '../lib/engine';
+} from '../engine';
 
 export default function Page() {
   const [st, setSt] = useState(null);

@@ -4,7 +4,7 @@ import Mascot from './Mascot';
 import {
   TRACKS, CAT_LABELS, byId, currentStreak, dueIds, loopCards, dailyDone, currentWeekly,
   mastery, fixedCount, lastNDays, todayStr, statsText, SET_SIZE,
-} from '../lib/engine';
+} from './engine';
 
 function greeting() {
   const h = new Date().getHours();
