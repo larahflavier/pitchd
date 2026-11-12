@@ -1,7 +1,8 @@
 'use client';
 import { useMemo, useState } from 'react';
+import { X } from 'lucide-react';
 import Mascot from './Mascot';
-import { byId, shuffle, CAT_LABELS } from './engine';
+import { byId, shuffle, CAT_LABELS } from '@/lib/engine';
 
 const RIGHT_LINES = ['Nice one!', 'That\'s it!', 'Locked in.', 'Correct!', 'You got it.'];
 const WRONG_LINES = ['Close. This one comes back soon.', 'No worries, I\'ll save it for later.', 'Good to see now, not in the interview.'];
@@ -34,7 +35,7 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
   return (
     <div className="main" key={q.id}>
       <div className="qtop">
-        <button className="x" onClick={onClose} aria-label="Close">✕</button>
+        <button className="x" onClick={onClose} aria-label="Close"><X size={18} strokeWidth={2.25} /></button>
         <div className="bar"><i style={{ width: `${((idx + (answered ? 1 : 0)) / ids.length) * 100}%` }} /></div>
         <div className="count">{idx + 1}/{ids.length}</div>
       </div>

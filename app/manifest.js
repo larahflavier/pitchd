@@ -5,8 +5,8 @@ export default function manifest() {
     description: '3-minute daily interview prep for business students',
     start_url: '/',
     display: 'standalone',
-    background_color: '#3b7bf0',
-    theme_color: '#3b7bf0',
+    background_color: '#f4f5f9',
+    theme_color: '#f4f5f9',
     icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' }],
   };
 }

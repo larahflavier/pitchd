@@ -1,11 +1,12 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import Quiz from '../Quiz';
-import { Onboarding, Home, Summary, Review, Progress } from '../Screens';
+import { House, RotateCcw, ChartNoAxesColumn } from 'lucide-react';
+import Quiz from '@/components/Quiz';
+import { Onboarding, Home, Summary, Review, Progress } from '@/components/Screens';
 import {
   TRACKS, loadState, saveState, resetState, ensureToday, buildSet, dueIds, currentWeekly,
   recordAnswer, completeDaily, byId, SET_SIZE,
-} from '../engine';
+} from '@/lib/engine';
 
 export default function Page() {
   const [st, setSt] = useState(null);
@@ -115,11 +116,11 @@ export default function Page() {
       {body}
       {showTabs && (
         <nav className="tabbar">
-          <button className={'tab' + (tab === 'home' ? ' active' : '')} onClick={() => setTab('home')}><span>🏠</span>Home</button>
+          <button className={'tab' + (tab === 'home' ? ' active' : '')} onClick={() => setTab('home')}><House size={20} strokeWidth={2} />Home</button>
           <button className={'tab' + (tab === 'review' ? ' active' : '')} onClick={() => setTab('review')}>
-            <span>🔁</span>Review{dueNow > 0 && <i className="badge">{dueNow}</i>}
+            <RotateCcw size={20} strokeWidth={2} />Review{dueNow > 0 && <i className="badge">{dueNow}</i>}
           </button>
-          <button className={'tab' + (tab === 'progress' ? ' active' : '')} onClick={() => setTab('progress')}><span>📈</span>Progress</button>
+          <button className={'tab' + (tab === 'progress' ? ' active' : '')} onClick={() => setTab('progress')}><ChartNoAxesColumn size={20} strokeWidth={2} />Progress</button>
         </nav>
       )}
     </div>

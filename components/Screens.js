@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
+import { Flame, Check } from 'lucide-react';
 import Mascot from './Mascot';
 import {
   TRACKS, CAT_LABELS, byId, currentStreak, dueIds, loopCards, dailyDone, currentWeekly,
   mastery, fixedCount, lastNDays, todayStr, statsText, SET_SIZE,
-} from './engine';
+} from '@/lib/engine';
 
 function greeting() {
   const h = new Date().getHours();
@@ -61,7 +62,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           <div className="greet">{greeting()}{st.name ? `, ${st.name}` : ''}</div>
           <div className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
         </div>
-        <div className="pill">🔥 {streak}</div>
+        <div className="pill"><Flame size={16} strokeWidth={2.25} />{streak}</div>
       </div>
 
       <div className="hero">
@@ -117,7 +118,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
             return (
               <div className="day" key={d}>
                 {lbl}
-                <div className={'dot' + (on ? ' on' : '') + (d === t ? ' today' : '')}>{on ? '✓' : ''}</div>
+                <div className={'dot' + (on ? ' on' : '') + (d === t ? ' today' : '')}>{on ? <Check size={16} strokeWidth={3} /> : null}</div>
               </div>
             );
           })}
@@ -142,7 +143,7 @@ export function Summary({ kind, results, st, onHome, onMore }) {
       </p>
       {kind === 'daily' && (
         <div className="stats" style={{ marginBottom: 14 }}>
-          <div className="stat"><small>Streak</small><b>🔥 {streak}</b></div>
+          <div className="stat"><small>Streak</small><b>{streak}</b></div>
           <div className="stat"><small>Best</small><b>{st.best}</b></div>
         </div>
       )}
