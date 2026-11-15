@@ -2,16 +2,17 @@
 import { useState } from 'react';
 import {
   Flame, Check, Target, RotateCcw, CircleCheck, Newspaper, MessagesSquare, BookOpen,
-  Calculator, Megaphone, Truck, Users,
+  Calculator, Megaphone, Truck, Users, CalendarClock,
 } from 'lucide-react';
 import Mascot from './Mascot';
 import ProgressRing from './ui/ProgressRing';
 import { cn } from '@/lib/utils';
 import {
   TRACKS, CAT_LABELS, byId, currentStreak, dueIds, loopCards, dailyDone, currentWeekly,
-  mastery, fixedCount, lastNDays, weekDays, todayStr, statsText, SET_SIZE, setSize, CATEGORY_SET_SIZE, SHARED,
+  planProfile, mastery, fixedCount, lastNDays, weekDays, todayStr, statsText, SET_SIZE, setSize, CATEGORY_SET_SIZE, SHARED,
 } from '@/lib/engine';
 import Roadmap from './Roadmap';
+import { describePlan } from '@/lib/curriculum';
 
 /* --------------------------------- Home --------------------------------- */
 const CAT_ICONS = {
@@ -33,6 +34,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
   const size = setSize(st);
   const shown = done ? size : Math.min(answered, size);
   const cats = [...SHARED, st.track];
+  const plan = describePlan(planProfile(st), st.plan, t, TRACKS[st.track].label);
 
   return (
     <div className="main flex flex-col gap-4">
@@ -58,8 +60,14 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           </ProgressRing>
         </div>
         <h2 className="mt-4 text-[22px] font-bold tracking-tight">Today's set</h2>
-        <p className="mt-0.5 text-[15px] font-semibold">{TRACKS[st.track].label}</p>
-        <p className="text-sm font-medium text-ink/70">{size} questions · {st.minutes} min</p>
+        <p className="mt-0.5 text-[15px] font-semibold">{plan.finished ? 'Plan complete' : plan.step}</p>
+        <p className="text-sm font-medium text-ink/70">{TRACKS[st.track].label} · {size} questions · {st.minutes} min</p>
+        {plan.daysLeft !== null && (
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-[13px] font-bold">
+            <CalendarClock size={14} strokeWidth={2.25} />
+            {plan.daysLeft > 1 ? `${plan.daysLeft} days until your interview` : plan.daysLeft === 1 ? '1 day until your interview' : plan.daysLeft === 0 ? 'Interview day' : 'Interview date has passed'}
+          </p>
+        )}
         <div className="mt-4 flex flex-wrap gap-2">
           {done ? (
             <>
