@@ -12,33 +12,6 @@ import {
   mastery, fixedCount, lastNDays, weekDays, todayStr, statsText, SET_SIZE, CATEGORY_SET_SIZE, SHARED,
 } from '@/lib/engine';
 
-/* ------------------------------ Onboarding ------------------------------ */
-export function Onboarding({ initialTrack, onDone }) {
-  const [track, setTrack] = useState(initialTrack);
-  const [name, setName] = useState('');
-  return (
-    <div className="main">
-      <div className="center" style={{ marginBottom: 4 }}>
-        <Mascot mood="happy" size={150} sparkles />
-      </div>
-      <div className="h1 center">Hey, I'm Pip.</div>
-      <p className="hint center" style={{ margin: '6px 0 14px' }}>
-        Three minutes a day of interview questions. Pick your major track and I'll mix it with behavioral, basics, and news.
-      </p>
-      <div className="tracks">
-        {Object.entries(TRACKS).map(([id, t]) => (
-          <button key={id} className={'track' + (track === id ? ' sel' : '')} onClick={() => setTrack(id)}>
-            <b>{t.label}</b>
-            <small>{t.blurb}</small>
-          </button>
-        ))}
-      </div>
-      <input className="text" placeholder="First name (optional)" value={name} onChange={(e) => setName(e.target.value)} maxLength={24} />
-      <button className="btn" disabled={!track} onClick={() => onDone(track, name.trim())}>Let's go</button>
-    </div>
-  );
-}
-
 /* --------------------------------- Home --------------------------------- */
 const CAT_ICONS = {
   behavioral: MessagesSquare, basics: BookOpen, news: Newspaper,

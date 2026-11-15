@@ -3,10 +3,12 @@ import { useEffect, useRef, useState } from 'react';
 import Quiz from '@/components/Quiz';
 import TabBar from '@/components/TabBar';
 import Placeholder from '@/components/Placeholder';
-import { Onboarding, Home, Summary, Review, Progress } from '@/components/Screens';
+import { Home, Summary, Review, Progress } from '@/components/Screens';
+import Landing from '@/components/Landing';
+import Onboarding from '@/components/Onboarding';
 import {
   TRACKS, loadState, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
-  recordAnswer, completeDaily, byId, SET_SIZE,
+  recordAnswer, completeDaily, buildQuickCheck, SET_SIZE,
 } from '@/lib/engine';
 
 export default function Page() {
@@ -15,6 +17,7 @@ export default function Page() {
   const [tab, setTab] = useState('home');
   const [session, setSession] = useState(null); // { kind, ids, reviewIds, results? }
   const [urlTrack, setUrlTrack] = useState(null);
+  const [started, setStarted] = useState(false); // past the landing page
 
   useEffect(() => {
     const s = loadState();
@@ -79,12 +82,26 @@ export default function Page() {
 
   /* ---- render ---- */
   let body;
-  if (!st.track || !TRACKS[st.track]) {
-    body = (
+  if (!st.onboarded || !TRACKS[st.track]) {
+    body = started ? (
       <Onboarding
+        initial={st}
         initialTrack={urlTrack}
-        onDone={(track, name) => persist({ ...ref.current, track, name })}
+        onBackToLanding={() => setStarted(false)}
+        // save the profile so far, then pick the quick-check questions from the chosen track
+        onStartQuick={(profile) => {
+          persist({ ...ref.current, ...profile });
+          return buildQuickCheck(ref.current);
+        }}
+        onAnswer={(qid, correct) => persist(recordAnswer(ref.current, qid, correct))}
+        onDone={(profile) => {
+          persist({ ...ref.current, ...profile });
+          setTab('home');
+          startDaily();
+        }}
       />
+    ) : (
+      <Landing onStart={() => setStarted(true)} />
     );
   } else if (session?.done) {
     body = (
@@ -126,7 +143,7 @@ export default function Page() {
     );
   }
 
-  const showTabs = st.track && !session;
+  const showTabs = st.onboarded && st.track && !session;
   return (
     <div className="app">
       {body}
