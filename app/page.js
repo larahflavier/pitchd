@@ -4,7 +4,7 @@ import { House, RotateCcw, ChartNoAxesColumn } from 'lucide-react';
 import Quiz from '@/components/Quiz';
 import { Onboarding, Home, Summary, Review, Progress } from '@/components/Screens';
 import {
-  TRACKS, loadState, saveState, resetState, ensureToday, buildSet, dueIds, currentWeekly,
+  TRACKS, loadState, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
   recordAnswer, completeDaily, byId, SET_SIZE,
 } from '@/lib/engine';
 
@@ -34,7 +34,18 @@ export default function Page() {
     const n = ensureToday(ref.current);
     persist(n);
     const remaining = n.today.ids.filter((id) => !(id in n.today.answers));
+    if (!remaining.length) {
+      // every answer is already saved (quit before "See results"): finish instead of opening an empty quiz
+      const c = completeDaily(n);
+      persist(c);
+      setSession({ kind: 'daily', ids: [], reviewIds: [], done: true, results: c.today.ids.map((id) => ({ id, correct: !!c.today.answers[id] })) });
+      return;
+    }
     setSession({ kind: 'daily', ids: remaining, reviewIds: dueIds(n) });
+  };
+  const startCategory = (cat) => {
+    const ids = buildCategorySet(ref.current, cat);
+    if (ids.length) setSession({ kind: 'category', ids, reviewIds: [] });
   };
   const startExtra = () => {
     const ids = buildSet(ref.current, { extra: true });
@@ -63,11 +74,11 @@ export default function Page() {
   };
   const closeSession = () => setSession(null);
 
-  const labelFor = { daily: "Today's set", extra: 'Extra practice', review: 'Review', weekly: 'This week in business' }[session?.kind];
+  const labelFor = { daily: "Today's set", extra: 'Extra practice', review: 'Review', category: 'Quick practice', weekly: 'This week in business' }[session?.kind];
 
   /* ---- render ---- */
   let body;
-  if (!st.track) {
+  if (!st.track || !TRACKS[st.track]) {
     body = (
       <Onboarding
         initialTrack={urlTrack}
@@ -96,7 +107,7 @@ export default function Page() {
       />
     );
   } else if (tab === 'home') {
-    body = <Home st={st} onStartDaily={startDaily} onStartExtra={startExtra} onStartReview={startReview} onStartWeekly={startWeekly} goto={setTab} />;
+    body = <Home st={st} onStartDaily={startDaily} onStartExtra={startExtra} onStartReview={startReview} onStartWeekly={startWeekly} onStartCategory={startCategory} goto={setTab} />;
   } else if (tab === 'review') {
     body = <Review st={st} onStartReview={startReview} />;
   } else {

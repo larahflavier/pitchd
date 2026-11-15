@@ -1,16 +1,16 @@
 'use client';
 import { useState } from 'react';
-import { Flame, Check } from 'lucide-react';
+import {
+  Flame, Check, Target, RotateCcw, CircleCheck, Newspaper, MessagesSquare, BookOpen,
+  Calculator, Megaphone, Truck, Users,
+} from 'lucide-react';
 import Mascot from './Mascot';
+import ProgressRing from './ui/ProgressRing';
+import { cn } from '@/lib/utils';
 import {
   TRACKS, CAT_LABELS, byId, currentStreak, dueIds, loopCards, dailyDone, currentWeekly,
-  mastery, fixedCount, lastNDays, todayStr, statsText, SET_SIZE,
+  mastery, fixedCount, lastNDays, weekDays, todayStr, statsText, SET_SIZE, CATEGORY_SET_SIZE, SHARED,
 } from '@/lib/engine';
-
-function greeting() {
-  const h = new Date().getHours();
-  return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
-}
 
 /* ------------------------------ Onboarding ------------------------------ */
 export function Onboarding({ initialTrack, onDone }) {
@@ -40,90 +40,167 @@ export function Onboarding({ initialTrack, onDone }) {
 }
 
 /* --------------------------------- Home --------------------------------- */
-export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWeekly, goto }) {
+const CAT_ICONS = {
+  behavioral: MessagesSquare, basics: BookOpen, news: Newspaper,
+  accounting: Calculator, marketing: Megaphone, supplychain: Truck, management: Users,
+};
+const CHIP_LABELS = { ...CAT_LABELS, basics: 'Basics' };
+const PILL = 'inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-[15px] font-semibold text-white active:scale-[0.98]';
+
+export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWeekly, onStartCategory, goto }) {
   const streak = currentStreak(st);
   const done = dailyDone(st);
   const due = dueIds(st).length;
-  const m = mastery(st);
   const week = currentWeekly();
   const weekAnswered = week && st.cards[week.id] && st.cards[week.id].last;
-  const days = lastNDays(7);
+  const days = weekDays();
   const t = todayStr();
-
-  let line = "Ready for 3 minutes? Let's set up today's set.";
-  if (done) line = 'Nice work today! Want to keep going?';
-  else if (due > 0) line = `I saved ${Math.min(due, 2)} tricky one${due > 1 ? 's' : ''} for you today.`;
-  else if (streak >= 3) line = `${streak} days in a row. Don't break it!`;
+  const answered = st.today?.date === t ? Object.keys(st.today.answers || {}).length : 0;
+  const shown = done ? SET_SIZE : Math.min(answered, SET_SIZE);
+  const cats = [...SHARED, st.track];
 
   return (
-    <div className="main">
-      <div className="top">
+    <div className="main flex flex-col gap-4">
+      {/* header */}
+      <div className="flex items-center justify-between">
         <div>
-          <div className="greet">{greeting()}{st.name ? `, ${st.name}` : ''}</div>
-          <div className="date">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
-        </div>
-        <div className="pill"><Flame size={16} strokeWidth={2.25} />{streak}</div>
-      </div>
-
-      <div className="hero">
-        <div className="hero-name">Pip</div>
-        <div className="hero-body">
-          <div className="bubble">{line}</div>
-          <div style={{ marginTop: 10 }}><Mascot mood={done ? 'happy' : 'neutral'} size={170} sparkles /></div>
-        </div>
-        <div className="stats">
-          <div className="stat"><small>Streak</small><b>{streak} {streak === 1 ? 'day' : 'days'}</b></div>
-          <div className="stat"><small>Mastery</small><b>{m.overall === null ? '--' : m.overall + '%'}</b></div>
-        </div>
-      </div>
-
-      {done ? (
-        <>
-          <button className="btn" onClick={onStartExtra}>Practice {SET_SIZE} more</button>
-          <div className="sub">Today's set is done. Extra practice won't change your streak.</div>
-        </>
-      ) : (
-        <>
-          <button className="btn" onClick={onStartDaily}>{st.today?.date === t && Object.keys(st.today.answers).length ? "Continue today's set" : "Start today's set"}</button>
-          <div className="sub">{SET_SIZE} questions · about 3 min · {TRACKS[st.track].label} track</div>
-        </>
-      )}
-
-      {week && (
-        <div className="card week">
-          <div className="tag">This week in business</div>
-          <h3>{week.topic}</h3>
-          <p>{weekAnswered ? 'You answered this one. Check Review if you missed it.' : 'One current-events question, refreshed every Monday.'}</p>
-          {!weekAnswered && <button className="btn" onClick={onStartWeekly}>Answer it</button>}
-        </div>
-      )}
-
-      {due > 0 && (
-        <div className="card">
-          <div className="card-head">
-            <h3>{due} due for review</h3>
-            <button className="link" onClick={onStartReview}>Practice now</button>
+          <div className="text-[22px] font-bold tracking-tight">Hello{st.name ? `, ${st.name}` : ''}</div>
+          <div className="mt-0.5 text-sm font-medium text-muted-foreground">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
           </div>
-          <p>Questions you missed come back after 1, 3, then 7 days.</p>
         </div>
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2 text-[15px] font-bold">
+          <Flame size={16} strokeWidth={2.25} className="text-teal" />{streak}
+        </div>
+      </div>
+
+      {/* action card */}
+      <section className="rounded-[32px] bg-periwinkle p-5">
+        <div className="flex items-start justify-between">
+          <span className="grid size-12 place-items-center rounded-full bg-surface"><Target size={22} strokeWidth={2} /></span>
+          <ProgressRing value={shown} max={SET_SIZE} size={58} stroke={5} trackClass="stroke-white" fillClass="stroke-ink">
+            <span className="text-[15px] font-bold">{shown}/{SET_SIZE}</span>
+          </ProgressRing>
+        </div>
+        <h2 className="mt-4 text-[22px] font-bold tracking-tight">Today's set</h2>
+        <p className="mt-0.5 text-[15px] font-semibold">{TRACKS[st.track].label}</p>
+        <p className="text-sm font-medium text-ink/70">{SET_SIZE} questions · 3 min</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {done ? (
+            <>
+              <div className={PILL}><Check size={18} strokeWidth={2.5} />Done for today</div>
+              <button className="inline-flex items-center justify-center rounded-full bg-surface px-6 py-3 text-[15px] font-semibold text-ink active:scale-[0.98]" onClick={onStartExtra}>
+                Practice {SET_SIZE} more
+              </button>
+            </>
+          ) : (
+            <button className={PILL} onClick={onStartDaily}>{answered > 0 ? 'Continue' : 'Start'}</button>
+          )}
+        </div>
+        {done && <p className="mt-3 text-sm font-medium text-ink/70">Extra practice won't change your streak.</p>}
+      </section>
+
+      {/* category practice */}
+      <section>
+        <div className="mb-2.5 flex items-baseline justify-between">
+          <h3 className="text-base font-bold">Quick practice</h3>
+          <span className="text-[13px] font-medium text-muted-foreground">{CATEGORY_SET_SIZE} questions</span>
+        </div>
+        <div className="-mx-[18px] overflow-x-auto px-[18px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex gap-2">
+            {cats.map((c) => {
+              const Icon = CAT_ICONS[c];
+              return (
+                <button
+                  key={c}
+                  onClick={() => onStartCategory(c)}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-4 py-2.5 text-sm font-semibold active:bg-ink active:text-white"
+                >
+                  <Icon size={16} strokeWidth={2} />{CHIP_LABELS[c]}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* review due */}
+      {due > 0 ? (
+        <section className="flex items-center gap-3 rounded-[28px] bg-orange-soft p-4">
+          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-surface"><RotateCcw size={21} strokeWidth={2} /></span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-bold">{due} due today</h3>
+            <p className="text-[13px] font-medium leading-snug text-ink/70">Missed questions come back after 1, 3, then 7 days.</p>
+          </div>
+          <button className={PILL + ' shrink-0 !px-5 !py-2.5 !text-sm'} onClick={onStartReview}>Review</button>
+        </section>
+      ) : (
+        <section className="flex items-center gap-3 rounded-[28px] bg-surface p-4">
+          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-app"><CircleCheck size={22} strokeWidth={2} className="text-teal" /></span>
+          <div>
+            <h3 className="text-base font-bold">Nothing due today</h3>
+            <p className="text-[13px] font-medium leading-snug text-muted-foreground">Miss a question and it comes back here.</p>
+          </div>
+        </section>
       )}
 
-      <div className="card">
-        <div className="card-head"><h3>This week</h3><button className="link" onClick={() => goto('progress')}>Progress</button></div>
-        <div className="strip">
+      {/* weekly news */}
+      <section className="rounded-[28px] bg-surface p-5">
+        {week ? (
+          <>
+            <span className="inline-block rounded-full bg-periwinkle-soft px-3 py-1 text-xs font-bold">This week in business</span>
+            <h3 className="mt-3 text-lg font-bold leading-snug tracking-tight">{week.topic}</h3>
+            {weekAnswered ? (
+              <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+                <Check size={16} strokeWidth={2.5} className="text-teal" />Answered. Check Review if you missed it.
+              </p>
+            ) : (
+              <>
+                <p className="mt-1.5 text-sm font-medium text-muted-foreground">One current-events question, refreshed every Monday.</p>
+                <button className={PILL + ' mt-4'} onClick={onStartWeekly}>Answer it</button>
+              </>
+            )}
+          </>
+        ) : (
+          <div className="flex items-center gap-3">
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-app"><Newspaper size={21} strokeWidth={2} /></span>
+            <div>
+              <h3 className="text-base font-bold">No news question yet</h3>
+              <p className="text-[13px] font-medium text-muted-foreground">A new one lands every Monday.</p>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* week strip */}
+      <section className="rounded-[28px] bg-surface p-5">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-base font-bold">This week</h3>
+          <button className="text-sm font-semibold text-periwinkle-strong" onClick={() => goto('progress')}>Progress</button>
+        </div>
+        <div className="flex justify-between">
           {days.map((d) => {
             const [y, mo, da] = d.split('-').map(Number);
-            const lbl = new Date(y, mo - 1, da).toLocaleDateString('en-US', { weekday: 'narrow' });
+            const lbl = new Date(y, mo - 1, da).toLocaleDateString('en-US', { weekday: 'short' });
             const on = st.history[d]?.setDone;
+            const isToday = d === t;
             return (
-              <div className="day" key={d}>
-                {lbl}
-                <div className={'dot' + (on ? ' on' : '') + (d === t ? ' today' : '')}>{on ? <Check size={16} strokeWidth={3} /> : null}</div>
+              <div key={d} className="flex flex-col items-center gap-2 text-xs font-semibold text-muted-foreground">
+                <span className={isToday ? 'text-ink' : ''}>{lbl}</span>
+                <div
+                  className={cn(
+                    'grid size-9 place-items-center rounded-full border text-white',
+                    on ? 'border-teal bg-teal' : d > t ? 'border-dashed border-line bg-app' : 'border-line bg-app',
+                    isToday && 'border-2 border-ink',
+                  )}
+                >
+                  {on ? <Check size={16} strokeWidth={3} /> : null}
+                </div>
               </div>
             );
           })}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
