@@ -9,8 +9,9 @@ import ProgressRing from './ui/ProgressRing';
 import { cn } from '@/lib/utils';
 import {
   TRACKS, CAT_LABELS, byId, currentStreak, dueIds, loopCards, dailyDone, currentWeekly,
-  mastery, fixedCount, lastNDays, weekDays, todayStr, statsText, SET_SIZE, CATEGORY_SET_SIZE, SHARED,
+  mastery, fixedCount, lastNDays, weekDays, todayStr, statsText, SET_SIZE, setSize, CATEGORY_SET_SIZE, SHARED,
 } from '@/lib/engine';
+import Roadmap from './Roadmap';
 
 /* --------------------------------- Home --------------------------------- */
 const CAT_ICONS = {
@@ -29,7 +30,8 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
   const days = weekDays();
   const t = todayStr();
   const answered = st.today?.date === t ? Object.keys(st.today.answers || {}).length : 0;
-  const shown = done ? SET_SIZE : Math.min(answered, SET_SIZE);
+  const size = setSize(st);
+  const shown = done ? size : Math.min(answered, size);
   const cats = [...SHARED, st.track];
 
   return (
@@ -51,19 +53,19 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
       <section className="rounded-[32px] bg-periwinkle p-5">
         <div className="flex items-start justify-between">
           <span className="grid size-12 place-items-center rounded-full bg-surface"><Target size={22} strokeWidth={2} /></span>
-          <ProgressRing value={shown} max={SET_SIZE} size={58} stroke={5} trackClass="stroke-white" fillClass="stroke-ink">
-            <span className="text-[15px] font-bold">{shown}/{SET_SIZE}</span>
+          <ProgressRing value={shown} max={size} size={58} stroke={5} trackClass="stroke-white" fillClass="stroke-ink">
+            <span className="text-[15px] font-bold">{shown}/{size}</span>
           </ProgressRing>
         </div>
         <h2 className="mt-4 text-[22px] font-bold tracking-tight">Today's set</h2>
         <p className="mt-0.5 text-[15px] font-semibold">{TRACKS[st.track].label}</p>
-        <p className="text-sm font-medium text-ink/70">{SET_SIZE} questions · 3 min</p>
+        <p className="text-sm font-medium text-ink/70">{size} questions · {st.minutes} min</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {done ? (
             <>
               <div className={PILL}><Check size={18} strokeWidth={2.5} />Done for today</div>
               <button className="inline-flex items-center justify-center rounded-full bg-surface px-6 py-3 text-[15px] font-semibold text-ink active:scale-[0.98]" onClick={onStartExtra}>
-                Practice {SET_SIZE} more
+                Practice {size} more
               </button>
             </>
           ) : (
@@ -204,7 +206,7 @@ export function Summary({ kind, results, st, onHome, onMore }) {
         </div>
       )}
       <button className="btn" onClick={onHome}>Back home</button>
-      <button className="btn ghost" onClick={onMore}>Practice {SET_SIZE} more</button>
+      <button className="btn ghost" onClick={onMore}>Practice {setSize(st)} more</button>
     </div>
   );
 }
@@ -267,6 +269,7 @@ export function Progress({ st, onTrack, onName, onReset }) {
   return (
     <div className="main">
       <div className="h1" style={{ marginBottom: 12 }}>Progress</div>
+      <Roadmap st={st} />
       <div className="kpis">
         <div className="stat"><small>Streak</small><b>{currentStreak(st)}</b></div>
         <div className="stat"><small>Best</small><b>{st.best}</b></div>

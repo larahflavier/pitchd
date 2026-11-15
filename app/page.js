@@ -7,7 +7,7 @@ import { Home, Summary, Review, Progress } from '@/components/Screens';
 import Landing from '@/components/Landing';
 import Onboarding from '@/components/Onboarding';
 import {
-  TRACKS, loadState, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
+  TRACKS, loadState, refreshPlan, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
   recordAnswer, completeDaily, buildQuickCheck, SET_SIZE,
 } from '@/lib/engine';
 
@@ -20,9 +20,10 @@ export default function Page() {
   const [started, setStarted] = useState(false); // past the landing page
 
   useEffect(() => {
-    const s = loadState();
+    const s = refreshPlan(loadState());
     ref.current = s;
     setSt(s);
+    saveState(s);
     const p = new URLSearchParams(window.location.search).get('track');
     if (p && TRACKS[p]) setUrlTrack(p);
   }, []);
@@ -95,7 +96,7 @@ export default function Page() {
         }}
         onAnswer={(qid, correct) => persist(recordAnswer(ref.current, qid, correct))}
         onDone={(profile) => {
-          persist({ ...ref.current, ...profile });
+          persist(refreshPlan({ ...ref.current, ...profile }, { force: true }));
           setTab('home');
           startDaily();
         }}
