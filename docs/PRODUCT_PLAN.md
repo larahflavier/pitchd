@@ -1,6 +1,6 @@
 # Pitchd Product Plan (v2)
 
-Last updated: Nov 15, 2026. Owner: Larah Flavier.
+Last updated: Nov 15, 2026. Owner: Larah Flavier. Pricing and AI limits match the Checkpoint 11 deck.
 
 This is the build plan for the next version of Pitchd. Claude Code should read it before starting any phase. Build one phase at a time, show a plan first, and stop for review after each screen.
 
@@ -104,23 +104,40 @@ Already being rebuilt in the redesign pass. Add:
 
 ### 3.5 Interview practice page
 
-| Mode | What it is | Tier |
-|---|---|---|
-| Quick drill | 3 questions, type your answer, compare to a model answer | Free |
-| Mock interview | Choose track, company type, and length (10 or 20 min). 5–8 questions with a timer per answer | Free: 1 per week. Premium: unlimited |
-| Story builder | Write 5–6 STAR stories once; the app tags each to the behavioral questions it answers | Free: 2 stories. Premium: unlimited plus AI feedback |
-| History | Past mocks with scores over time | Free |
+| Mode | What it is | Free | Premium |
+|---|---|---|---|
+| Quick drill | 3 questions, type your answer, compare to a model answer | Yes, self-check (no AI) | Yes |
+| Mock interview | Choose track, company type, and length (10 or 20 min). 5–8 questions with a timer per answer | 1 per week, self-check against the question's key points (no AI) | AI feedback on every answer, using the monthly AI reviews |
+| Story builder | Write 5–6 STAR stories once; the app tags each to the behavioral questions it answers | 2 stories, self-check | Unlimited stories; AI feedback uses the monthly AI reviews |
+| History | Past mocks with scores over time | Yes | Yes |
 
-**AI feedback on each answer** (Claude API, run on the server):
+**Self-check (free):** after answering, the user sees the model answer and the question's key points as a checklist and ticks off the ones they covered. No AI call, so free users cost nothing in AI.
+
+**AI reviews (premium): 30 per month.** One AI review is one graded answer. This matches the AI budget in the Checkpoint 11 deck:
+
+| Deck assumption | Value |
+|---|---|
+| Model | Claude Sonnet 4.6: $3 per 1M input tokens, $15 per 1M output tokens |
+| Size of one AI exercise | ~4,000 input tokens + ~1,000 output tokens ≈ $0.027 |
+| Exercises per paid month | 30 → $0.81 |
+| Usage buffer | $0.19 |
+| AI budget per paid month | **$1.00** |
+
+- 30 reviews covers about 4–6 full mock interviews a month.
+- Show a counter: "18 of 30 AI reviews left this month · resets Dec 1."
+- When they run out, mocks fall back to self-check until the counter resets. No surprise charges.
+- Log the tokens used on every review. If the real average differs from 4k in / 1k out, update the deck's AI line and either the cap or the price.
+
+**AI feedback on each answer** (Claude API, run on the server, premium only):
 - Structure: did it follow STAR, for behavioral questions?
 - Key points: which of the question's human-written `keyPoints` the answer covered
 - Specificity and length
 - A score from 1 to 5, plus one suggested rewrite of the weakest sentence
 - An overall summary at the end, which feeds the weak categories back into the curriculum
 
-**Guardrails:** technical answers are graded only against human-written key points, not the AI's own judgment. Feedback is labeled as practice guidance. Log the AI cost of every mock and cap free usage. The deck assumes about $1 of AI cost per paid user per month, so check that number against real usage.
+**Guardrails:** technical answers are graded only against human-written key points, not the AI's own judgment. Feedback is labeled as practice guidance. Free users never trigger an AI call.
 
-Answers are typed first. Voice (record in the browser, transcribe, then grade) comes later, in Phase 5.
+Answers are typed. The deck says "text only," and its AI budget doesn't cover voice. Voice (record in the browser, transcribe, then grade) stays in Phase 5, and only ships after the deck adds a transcription cost line.
 
 ### 3.6 Account tab
 
@@ -134,7 +151,10 @@ Answers are typed first. Voice (record in the browser, transcribe, then grade) c
 
 ### 3.7 Premium model
 
-Based on the deck ($12.99/month). Can should confirm these numbers.
+Matches the Checkpoint 11 deck: one paid tier at **$12.99/month**, a free version with daily practice, and creators paid commission on premium sign-ups. Can owns these numbers.
+
+**One-line answer to "what does $12.99 buy?"** (use this on the unit economics slide):
+> Free: one 3-minute daily set for your major. Premium: every major, the full question bank, and AI-graded mock interviews.
 
 | | Free | Premium |
 |---|---|---|
@@ -143,17 +163,31 @@ Based on the deck ($12.99/month). Can should confirm these numbers.
 | Question bank | Free questions | Full bank plus company and industry packs |
 | Category drills | 1 per day | Unlimited |
 | Review decks | Due, Missed, Saved | All, plus custom decks |
-| Mock interviews | 1 per week, short | Unlimited, with AI feedback |
-| Story builder | 2 stories | Unlimited, with AI feedback |
+| Mock interviews | 1 per week, self-check (no AI) | Unlimited mocks; AI feedback on up to 30 answers a month |
+| Story builder | 2 stories, self-check | Unlimited; AI feedback counts toward the 30 |
 | Analytics | Basic stats | Readiness score, category trends |
 | Streak freezes | 1 per week | 2 per week |
 
-**Pricing to test:**
-- $12.99/month (the deck's price)
-- A **semester plan** (e.g. $39 for 4 months). This fixes the unit economics problem in the deck: users only paying for about 3 months puts LTV:CAC at around 1.3x.
-- A **7-day free Premium trial** right after onboarding, then back to Free. Users see the full product before deciding.
+**Unit economics per paying user** (deck numbers):
 
-**Year 2:** club and career center licenses, with a group code and a coach dashboard.
+| | Per paid month |
+|---|---|
+| Price | $12.99 |
+| AI allowance (30 reviews) | −$1.00 |
+| Stripe fees (2.9% + $0.30 + 0.7% billing) | −$0.77 |
+| **Contribution** | **$11.22** |
+
+Over the deck's 3 billed months, that's $33.66 per customer against a $25 CAC, about 1.35x. Investors usually want 3x, so retention past month 3 is the number to improve. Creator commissions come out of this too. The deck counts creator spend under ads, so if commission is paid per sale, it lowers contribution on those customers.
+
+**At launch: $12.99/month only.** That's the deck's model. Two options are not in the deck. Only add them if Can updates the deck to include them:
+- **Semester plan, $39 for 4 months.** The deck expects $38.97 per customer (3 × $12.99), so this collects the same revenue upfront and removes the risk of users canceling after month 1. Contribution is about the same ($39 − $4 AI − $1.70 Stripe ≈ $33.30).
+- **Free trial.** It delays revenue and changes the deck's 5% install-to-paid assumption. Skip it at launch. The free tier already lets people try the app.
+
+**Deck fixes to send Can:**
+1. The unit economics slide says $12.99 buys "Daily interview practice," but the competitor slide says daily practice is free. Use the one-line answer above.
+2. The CAC numbers don't line up. $1 per install at 5% paid is a $20 CAC, not $25. A $30k budget at $1 per install is 30,000 installs; at 5%, that's 1,500 payers, not 1,200. Either conversion is about 4%, or the cost per install is about $1.25.
+
+**Year 2 (not in the deck's revenue):** club and career center licenses, with a group code and a coach dashboard. Treat it as upside.
 
 Don't put streak protection behind the paywall as the main reason to upgrade. Making people pay to avoid losing a streak works in the short term and makes users resent the app.
 
@@ -296,9 +330,9 @@ Each phase is one Claude Code session. Start each with: "Read docs/PRODUCT_PLAN.
 | 0 | Finish the redesign pass on `redesign-foundation`; fix the blank page; merge to `main` | No |
 | 1 | Landing and onboarding (3.1), rule-based curriculum (3.2), Review card decks (3.4), gamification v1: goal ring, streak freezes, XP, combo, celebrations (3.9). Data still saved in the browser | No |
 | 2 | Accounts and database (Supabase), Account tab (3.6), move progress into the account, PostHog | Yes |
-| 3 | Move the question bank into the database with `tier`, premium gating, Stripe, paywall and trial (3.7), make the repo private | Yes |
-| 4 | Interview page: quick drill, mock interviews with AI feedback, story builder (3.5) | Yes |
-| 5 | Voice answers, leagues, referrals, share cards, company packs | Yes |
+| 3 | Move the question bank into the database with `tier`, premium gating, Stripe, paywall, monthly AI review counter (3.7), make the repo private | Yes |
+| 4 | Interview page: quick drill, mock interviews with self-check (free) and AI feedback capped at 30 reviews a month (premium), story builder, token logging (3.5) | Yes |
+| 5 | Leagues, referrals, share cards, company packs. Voice answers only after the deck adds a transcription cost line | Yes |
 
 **Content runs alongside every phase:** grow the bank toward the targets in 3.8, starting with Finance and three engineering tracks.
 
@@ -324,8 +358,8 @@ Based on who owned which slide.
 
 1. Make the GitHub repo private now? (Recommended; needed before premium content.)
 2. Ask for an account before or after the first set? (Recommended: after.)
-3. Pricing: monthly only, or monthly plus a semester plan?
-4. Offer a 7-day Premium trial after onboarding?
+3. Add a semester plan ($39 for 4 months)? Needs a deck update first.
+4. Is 30 AI reviews a month the right premium cap, or should the deck's AI budget change?
 5. Which three engineering tracks go first?
 6. Leaderboards: by school, by club, or none at launch?
 7. Sound effects on or off by default?
