@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { House, RotateCcw, ChartNoAxesColumn } from 'lucide-react';
 import Quiz from '@/components/Quiz';
+import TabBar from '@/components/TabBar';
+import Placeholder from '@/components/Placeholder';
 import { Onboarding, Home, Summary, Review, Progress } from '@/components/Screens';
 import {
   TRACKS, loadState, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
@@ -108,8 +109,12 @@ export default function Page() {
     );
   } else if (tab === 'home') {
     body = <Home st={st} onStartDaily={startDaily} onStartExtra={startExtra} onStartReview={startReview} onStartWeekly={startWeekly} onStartCategory={startCategory} goto={setTab} />;
+  } else if (tab === 'interview') {
+    body = <Placeholder title="Interview" text="Mock interviews and the story builder are coming soon." />;
   } else if (tab === 'review') {
     body = <Review st={st} onStartReview={startReview} />;
+  } else if (tab === 'account') {
+    body = <Placeholder title="Account" text="Your profile, goals, and settings are coming soon." />;
   } else {
     body = (
       <Progress
@@ -125,15 +130,7 @@ export default function Page() {
   return (
     <div className="app">
       {body}
-      {showTabs && (
-        <nav className="tabbar">
-          <button className={'tab' + (tab === 'home' ? ' active' : '')} onClick={() => setTab('home')}><House size={20} strokeWidth={2} />Home</button>
-          <button className={'tab' + (tab === 'review' ? ' active' : '')} onClick={() => setTab('review')}>
-            <RotateCcw size={20} strokeWidth={2} />Review{dueNow > 0 && <i className="badge">{dueNow}</i>}
-          </button>
-          <button className={'tab' + (tab === 'progress' ? ' active' : '')} onClick={() => setTab('progress')}><ChartNoAxesColumn size={20} strokeWidth={2} />Progress</button>
-        </nav>
-      )}
+      {showTabs && <TabBar tab={tab} onChange={setTab} reviewDue={dueNow} />}
     </div>
   );
 }
