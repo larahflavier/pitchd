@@ -14,7 +14,7 @@ This is the build plan for the next version of Pitchd. Claude Code should read i
 - The visual redesign is in progress on `redesign-foundation`. Home is done; Quiz, Summary, Review, Progress, and Onboarding are next. Finish that before starting Phase 1.
 
 **Two problems to fix before premium launches:**
-1. **The repo is public.** Everything in `data/questions.json` can be read by anyone on GitHub, and it's also bundled into the app, so anyone can read it in their browser. Premium questions can't live there. Make the repo private, and serve premium questions from the database only to paying users (see section 5).
+1. **Questions ship inside the app.** The repo is now private, but everything in `data/questions.json` is still bundled into the app, so anyone can read it in their browser. Premium questions have to come from the database, served only to paying users (see section 5).
 2. **No accounts means no premium.** Payments need a logged-in user to attach the subscription to. Accounts come before Stripe.
 
 ---
@@ -46,6 +46,8 @@ Landing → Onboarding → Plan reveal → Home
 
 Bottom tab bar: **Home · Interview · Review · Progress · Account** (5 tabs, Lucide icons).
 
+The About page (`/about`, section 9) opens from the landing page and the Account tab. A sound toggle sits in the header on every screen.
+
 ---
 
 ## 3. Features
@@ -54,17 +56,18 @@ Bottom tab bar: **Home · Interview · Review · Progress · Account** (5 tabs, 
 
 One question per screen, big tap targets, a progress bar at the top. It should take about 90 seconds.
 
-1. **Landing:** the logo, one line ("3 minutes a day to walk into interviews ready"), a **Get started** button, and an "I already have an account" link.
+1. **Landing:** the logo, one line ("3 minutes a day to walk into interviews ready"), a **Get started** button, an "I already have an account" link, a "Why it works" link to the About page, and the sound toggle.
 2. **Name:** "What should we call you?"
-3. **Year:** First-year / Sophomore / Junior / Senior / Grad.
-4. **Major:** pick from the list in 3.8. This sets their track.
-5. **Goal:** "What are you preparing for?" Internship / Full-time / Co-op, then an industry (e.g. banking, consulting, accounting, engineering, marketing, other).
-6. **Timeline:** "When's your next interview or recruiting season?" A date picker, or quick options: "This month," "This semester," "Next year," "Not sure."
-7. **Daily habit:** pick 3, 5, or 10 minutes a day, then "What time works best?" (sets the reminder). Ask for notification permission here.
-8. **Quick check:** 5 mixed questions to measure their starting level. Label it "No pressure, this just sets your starting point."
-9. **Plan reveal:** shows their roadmap ("Your 6-week plan to [goal]"), with step 1 already checked off for finishing setup. Button: **Start day 1**.
+3. **School:** Lehigh, Lafayette, Penn, Villanova, Princeton, Drexel, or Other. Used for school leagues (3.9).
+4. **Year:** First-year / Sophomore / Junior / Senior / Grad.
+5. **Major:** pick from the list in 3.8. This sets their track.
+6. **Goal:** "What are you preparing for?" Internship / Full-time / Co-op, then an industry (e.g. banking, consulting, accounting, engineering, marketing, other).
+7. **Timeline:** "When's your next interview or recruiting season?" A date picker, or quick options: "This month," "This semester," "Next year," "Not sure."
+8. **Daily habit:** pick 3, 5, or 10 minutes a day, then "What time works best?" (sets the reminder). Ask for notification permission here.
+9. **Quick check:** 5 mixed questions to measure their starting level. Label it "No pressure, this just sets your starting point."
+10. **Plan reveal:** shows their roadmap ("Your 6-week plan to [goal]"), with step 1 already checked off for finishing setup. Button: **Start day 1**.
 
-Don't ask them to create an account until after their first set ("Save your progress"). Asking first loses people before they've seen the app. An account is required for premium.
+**Decided:** the account prompt comes after the first set ("Save your progress"), once accounts exist in Phase 2. Asking first loses people before they've seen the app. An account is required for premium.
 
 ### 3.2 Personalized curriculum
 
@@ -141,10 +144,12 @@ Answers are typed. The deck says "text only," and its AI budget doesn't cover vo
 
 ### 3.6 Account tab
 
-- Profile: name, year, major
+- Profile: name, school, year, major
 - Goals and timeline: editing these rebuilds the plan
 - Tracks: switch tracks, or add a second one (premium)
 - Reminders: time of day, on or off
+- Sound: on or off (same setting as the header toggle)
+- About Pitchd: link to the About page
 - Plan: Free or Premium, with an upgrade button or "Manage subscription" (opens Stripe's billing page)
 - Referral code
 - Download my data, delete account, sign out
@@ -179,9 +184,7 @@ Matches the Checkpoint 11 deck: one paid tier at **$12.99/month**, a free versio
 
 Over the deck's 3 billed months, that's $33.66 per customer against a $25 CAC, about 1.35x. Investors usually want 3x, so retention past month 3 is the number to improve. Creator commissions come out of this too. The deck counts creator spend under ads, so if commission is paid per sale, it lowers contribution on those customers.
 
-**At launch: $12.99/month only.** That's the deck's model. Two options are not in the deck. Only add them if Can updates the deck to include them:
-- **Semester plan, $39 for 4 months.** The deck expects $38.97 per customer (3 × $12.99), so this collects the same revenue upfront and removes the risk of users canceling after month 1. Contribution is about the same ($39 − $4 AI − $1.70 Stripe ≈ $33.30).
-- **Free trial.** It delays revenue and changes the deck's 5% install-to-paid assumption. Skip it at launch. The free tier already lets people try the app.
+**Decided: $12.99/month only.** No semester plan and no free trial at launch. The free tier is how people try the app. The 30-AI-review cap stays as the deck has it; revisit it in later iterations once real usage is logged.
 
 **Deck fixes to send Can:**
 1. The unit economics slide says $12.99 buys "Daily interview practice," but the competitor slide says daily practice is free. Use the one-line answer above.
@@ -213,7 +216,7 @@ New shared categories for engineering tracks: **Engineering fundamentals** and *
 | Shared (behavioral, basics, news) | 90 | +150 |
 | Packs (e.g. Big 4, banks, consulting, rotational programs) | none | 40–60 each |
 
-**Rollout:** first Finance plus Mechanical, Electrical, and Industrial engineering; then the rest.
+**Rollout:** first Finance plus Mechanical, Electrical/Computer, and Industrial & Systems engineering (order doesn't matter); then the rest.
 
 **Question format** (extends the current `id, cat, q, a, w, e`):
 
@@ -245,8 +248,8 @@ Section 4 has the research behind each item.
 | Fresh start | New weekly theme every Monday; a "new semester" plan in January and August | |
 | Skill map | Topic tiles that fill in as cards get mastered | Mastery requires passing the 30-day review |
 | Badges | First mock, 7-day streak, "Accounting basics mastered" | Only for real milestones |
-| Leagues (later) | Weekly opt-in leaderboard by school or club | Opt-in, resets weekly, compares people at similar levels |
-| Celebrations | Confetti, a short sound (off by default), phone vibration where supported | Follows the phone's reduced-motion setting; quiz answers stay instant |
+| School leagues (Phase 2) | Weekly leaderboard by school: Lehigh, Lafayette, Penn, Villanova, Princeton, Drexel. Ranked by XP earned that week | Opt-in; school confirmed by .edu email once accounts exist; resets weekly; shows first name and last initial only |
+| Celebrations | Confetti, short sounds, phone vibration where supported | Sound is on by default, with a speaker toggle in the header from the first screen; the choice is remembered. Follows the phone's reduced-motion setting; quiz answers stay instant |
 | Feedback copy | "Nice, you used the matching principle" instead of "You're smart!" | Praise the method, not the person |
 
 **Animation tools:** Motion (framer-motion) for screen transitions, the ring, and level-ups; canvas-confetti for celebrations. Keep each animation under about 600ms, and save the big ones for set completion and milestones.
@@ -328,11 +331,11 @@ Each phase is one Claude Code session. Start each with: "Read docs/PRODUCT_PLAN.
 | Phase | What gets built | Backend needed? |
 |---|---|---|
 | 0 | Finish the redesign pass on `redesign-foundation`; fix the blank page; merge to `main` | No |
-| 1 | Landing and onboarding (3.1), rule-based curriculum (3.2), Review card decks (3.4), gamification v1: goal ring, streak freezes, XP, combo, celebrations (3.9). Data still saved in the browser | No |
-| 2 | Accounts and database (Supabase), Account tab (3.6), move progress into the account, PostHog | Yes |
+| 1 | New 5-tab layout, landing and onboarding (3.1), rule-based curriculum (3.2), Review card decks (3.4), Interview page with self-check only (3.5), Account tab without payments (3.6), gamification v1 (3.9), new tracks with draft questions (3.8), About page (section 9). Data still saved in the browser | No |
+| 2 | Accounts and database (Supabase), "Save your progress" after the first set, move progress into the account, school leagues, PostHog | Yes |
 | 3 | Move the question bank into the database with `tier`, premium gating, Stripe, paywall, monthly AI review counter (3.7), make the repo private | Yes |
 | 4 | Interview page: quick drill, mock interviews with self-check (free) and AI feedback capped at 30 reviews a month (premium), story builder, token logging (3.5) | Yes |
-| 5 | Leagues, referrals, share cards, company packs. Voice answers only after the deck adds a transcription cost line | Yes |
+| 5 | Referrals, share cards, company packs. Voice answers only after the deck adds a transcription cost line | Yes |
 
 **Content runs alongside every phase:** grow the bank toward the targets in 3.8, starting with Finance and three engineering tracks.
 
@@ -354,15 +357,94 @@ Based on who owned which slide.
 
 ---
 
-## 8. Open decisions
+## 8. Decisions (Nov 15, 2026)
 
-1. Make the GitHub repo private now? (Recommended; needed before premium content.)
-2. Ask for an account before or after the first set? (Recommended: after.)
-3. Add a semester plan ($39 for 4 months)? Needs a deck update first.
-4. Is 30 AI reviews a month the right premium cap, or should the deck's AI budget change?
-5. Which three engineering tracks go first?
-6. Leaderboards: by school, by club, or none at launch?
-7. Sound effects on or off by default?
+1. Repo is private.
+2. Account prompt comes after the first set.
+3. No semester plan.
+4. Keep the 30 AI reviews a month from the deck; revisit in later iterations.
+5. Engineering tracks: order doesn't matter. Starting with Mechanical, Electrical/Computer, and Industrial & Systems.
+6. Leagues by school: Lehigh, Lafayette, Penn, Villanova, Princeton, Drexel.
+7. Sound on by default, with a toggle visible from the first screen.
+
+---
+
+## 9. About page copy
+
+Route: `/about`. Linked from the landing page ("Why it works") and the Account tab. Use this copy as written. Show each item as a card: the title, what you see in the app, and why it works, with the source in small grey text.
+
+### Why Pitchd works
+
+Pitchd is built on research about how people remember what they learn and how habits stick. Here's what each part of the app is based on.
+
+#### How you learn
+
+**You answer before you see the answer.**
+Trying to recall something strengthens memory more than rereading it. Every question asks first and explains after.
+*Roediger & Karpicke, 2006*
+
+**Missed questions come back.**
+Reviewing at growing gaps (1, 3, 7, 14, then 30 days) beats cramming the night before. That's why your Review deck changes every day.
+*Cepeda et al., 2006*
+
+**Topics are mixed.**
+Switching between topics in one session helps you learn to tell them apart, which is what an interviewer is testing. Your daily set mixes behavioral, basics, news, and your major.
+*Rohrer & Taylor, 2007*
+
+**It's a little hard on purpose.**
+Practice that takes some effort sticks better. Pitchd adjusts difficulty so you get about 8 in 10 right: hard enough to learn, easy enough to keep going.
+*Bjork, 1994; Wilson et al., 2019*
+
+**Every answer explains why.**
+Feedback helps most when it tells you why and what to do next. Each answer shows the reasoning, and mock interviews end with one specific fix.
+*Hattie & Timperley, 2007*
+
+#### How the habit sticks
+
+**You pick when you practice.**
+Deciding when and where you'll do something makes you more likely to do it. You choose a time during setup, and Pitchd reminds you then.
+*Gollwitzer, 1999*
+
+**The ring fills as you go.**
+People speed up as they get closer to a goal. The daily ring and "1 question left" use that.
+*Kivetz, Urminsky & Zheng, 2006*
+
+**Your plan starts with a step done.**
+You're more likely to finish something when you start with progress already counted. Finishing setup checks off step 1.
+*Nunes & Drèze, 2006*
+
+**New week, new theme.**
+Mondays and new semesters feel like fresh starts, and people start goals more often then. Your plan updates every Monday.
+*Dai, Milkman & Riis, 2014*
+
+**Streaks, with freezes.**
+Losing something feels about twice as strong as gaining it, which is why streaks work. Freezes keep a missed day from wiping out your progress.
+*Kahneman & Tversky, 1979*
+
+**Sometimes there's a bonus.**
+Your brain's reward system responds most to rewards that are better than expected. That's why bonuses show up sometimes, not every time.
+*Schultz, Dayan & Montague, 1997*
+
+**Levels, mastery, and your school.**
+Motivation lasts when you feel capable, in control, and connected to others. Mastery maps show what you've learned, you choose your goals, and school leagues let you practice alongside classmates.
+*Ryan & Deci, 2000*
+
+#### What we don't do
+
+- No paying to save a streak.
+- No loot boxes or rewards you can buy.
+- No points for speed alone. Accuracy and reviews earn XP.
+- We praise how you answered, not how smart you are, because praising ability makes people avoid hard questions. *Mueller & Dweck, 1998*
+- Rewards are about your progress, not bribes. Rewards that feel controlling can lower interest in the task itself. *Deci, Koestner & Ryan, 1999*
+- Sound and motion can be turned off, and Pitchd follows your phone's reduced-motion setting.
+
+#### The honest version
+
+Game features help learning, but modestly, and only when they're designed well. Points on their own don't do much (Sailer & Homner, 2020). The practice is what gets you ready. The game parts are there to get you to show up for it.
+
+#### Sources
+
+List every source from the Sources section below.
 
 ---
 
