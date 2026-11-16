@@ -2,16 +2,16 @@
 import { useEffect, useRef, useState } from 'react';
 import Quiz from '@/components/Quiz';
 import TabBar from '@/components/TabBar';
-import Placeholder from '@/components/Placeholder';
 import { Home, Summary, Progress } from '@/components/Screens';
 import Review from '@/components/Review';
 import Interview from '@/components/Interview';
+import Account from '@/components/Account';
 import { storyCards } from '@/lib/interview';
 import ReviewDeck from '@/components/ReviewDeck';
 import Landing from '@/components/Landing';
 import Onboarding from '@/components/Onboarding';
 import {
-  TRACKS, loadState, refreshPlan, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
+  TRACKS, loadState, refreshPlan, updateProfile, applyGoals, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
   recordAnswer, completeDaily, buildQuickCheck, deckIds, toggleSaved,
 } from '@/lib/engine';
 
@@ -160,15 +160,17 @@ export default function Page() {
   } else if (tab === 'review') {
     body = <Review st={st} onOpenDeck={startDeck} />;
   } else if (tab === 'account') {
-    body = <Placeholder title="Account" text="Your profile, goals, and settings are coming soon." />;
+    body = (
+      <Account
+        st={st}
+        onPatch={(patch) => persist(updateProfile(ref.current, patch))}
+        onSaveGoals={(patch) => persist(applyGoals(ref.current, patch))}
+        onReset={() => { persist(resetState()); setStarted(false); setTab('home'); }}
+      />
+    );
   } else {
     body = (
-      <Progress
-        st={st}
-        onTrack={(track) => persist({ ...ref.current, track, today: null })}
-        onName={(name) => persist({ ...ref.current, name })}
-        onReset={() => { persist(resetState()); setTab('home'); }}
-      />
+      <Progress st={st} />
     );
   }
 

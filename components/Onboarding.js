@@ -97,6 +97,7 @@ export default function Onboarding({ initial, initialTrack, onBackToLanding, onS
     minutes: d.minutes,
     remindAt: d.remindAt,
     remindPerm,
+    remindOn: remindPerm === 'granted',
   });
 
   const back = () => (step === 0 ? onBackToLanding() : setStep(step - 1));
@@ -116,7 +117,7 @@ export default function Onboarding({ initial, initialTrack, onBackToLanding, onS
     if (id === 'habit') {
       const perm = await askPermission();
       // save the profile so far, so the quick check can pick questions from the chosen track
-      setQuickIds(onStartQuick({ ...profile(), remindPerm: perm }));
+      setQuickIds(onStartQuick({ ...profile(), remindPerm: perm, remindOn: perm === 'granted' }));
     }
     setStep(step + 1);
   };

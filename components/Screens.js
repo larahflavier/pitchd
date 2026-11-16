@@ -9,7 +9,7 @@ import ProgressRing from './ui/ProgressRing';
 import { cn } from '@/lib/utils';
 import {
   TRACKS, CAT_LABELS, byId, currentStreak, dueIds, dailyDone, currentWeekly,
-  planProfile, mastery, lastNDays, weekDays, todayStr, statsText, setSize, CATEGORY_SET_SIZE, SHARED,
+  planProfile, mastery, lastNDays, weekDays, todayStr, setSize, CATEGORY_SET_SIZE, SHARED,
 } from '@/lib/engine';
 import Roadmap from './Roadmap';
 import { describePlan } from '@/lib/curriculum';
@@ -31,7 +31,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
   const days = weekDays();
   const t = todayStr();
   const answered = st.today?.date === t ? Object.keys(st.today.answers || {}).length : 0;
-  const size = setSize(st);
+  const size = st.today?.date === t ? st.today.ids.length : setSize(st);
   const shown = done ? size : Math.min(answered, size);
   const cats = [...SHARED, st.track];
   const plan = describePlan(planProfile(st), st.plan, t, TRACKS[st.track].label);
@@ -220,15 +220,10 @@ export function Summary({ kind, results, st, onHome, onMore }) {
 }
 
 /* -------------------------------- Progress ------------------------------- */
-export function Progress({ st, onTrack, onName, onReset }) {
+export function Progress({ st }) {
   const m = mastery(st);
-  const [copied, setCopied] = useState(false);
   const cats = ['behavioral', 'basics', 'news', st.track];
   const days = lastNDays(21);
-  const copy = async () => {
-    try { await navigator.clipboard.writeText(statsText(st)); setCopied(true); setTimeout(() => setCopied(false), 2000); }
-    catch { window.prompt('Copy your stats:', statsText(st)); }
-  };
   return (
     <div className="main">
       <div className="h1" style={{ marginBottom: 12 }}>Progress</div>
@@ -257,35 +252,6 @@ export function Progress({ st, onTrack, onName, onReset }) {
       <div className="card">
         <h3>Last 3 weeks</h3>
         <div className="cal">{days.map((d) => <div key={d} className={st.history[d]?.setDone ? 'on' : ''} title={d} />)}</div>
-      </div>
-
-      <div className="card">
-        <h3>Your track</h3>
-        <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-          {Object.entries(TRACKS).map(([id, t]) => (
-            <button key={id} className={'chip'} onClick={() => onTrack(id)} style={{ border: 0, cursor: 'pointer', outline: st.track === id ? '2px solid var(--blue-500)' : 'none' }}>
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <div className="spacer" />
-        <input className="text" placeholder="First name (optional)" value={st.name} onChange={(e) => onName(e.target.value)} maxLength={24} style={{ marginBottom: 0 }} />
-      </div>
-
-      <div className="card">
-        <h3>Share your stats</h3>
-        <p>Copies a short summary you can text back to whoever's running the pilot.</p>
-        <div className="spacer" />
-        <button className="btn secondary small" onClick={copy}>{copied ? 'Copied!' : 'Copy my stats'}</button>
-      </div>
-
-      <div className="card">
-        <h3>Tip</h3>
-        <p>Add Pitchd to your home screen from your browser's share menu so it opens like an app. Progress is saved on this device only.</p>
-        <div className="spacer" />
-        <button className="btn ghost small" onClick={() => { if (window.confirm('Erase all progress on this device?')) onReset(); }} style={{ color: 'var(--red)', padding: 0 }}>
-          Reset all progress
-        </button>
       </div>
     </div>
   );
