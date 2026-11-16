@@ -202,6 +202,7 @@ export default function Page() {
         onOpenBonus={openBonus}
         onHome={() => { setSession(null); setTab('home'); }}
         onMore={() => { setSession(null); startExtra(); }}
+        onReview={() => { setSession(null); setTab('review'); }}
       />
     );
   } else if (session) {
@@ -253,7 +254,7 @@ export default function Page() {
      <PipProvider>
       <div className="app">
         {st.onboarded && (
-          <div className="-mb-1 flex justify-end">
+          <div className="relative z-30 -mb-1 flex justify-end">
             <SoundToggle on={st.sound !== false} onChange={(sound) => persist({ ...ref.current, sound })} />
           </div>
         )}

@@ -228,6 +228,11 @@
   .spacer { height: 10px; }
 }
 
+/* Answer flourishes. They start only after the tapped answer has already painted. */
+@keyframes opt-wipe { from { transform: scale(0); } to { transform: scale(1); } }
+.opt-wipe { transform-origin: var(--wx, 50%) var(--wy, 50%); animation: opt-wipe 0.26s ease-out forwards; }
+@keyframes opt-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.opt-shake { animation: opt-shake 0.125s ease-in-out 2; }
 @keyframes ring-sweep { from { stroke-dashoffset: var(--ring-c); } to { stroke-dashoffset: var(--ring-to); } }
 .ring-sweep { animation: ring-sweep .6s ease-out both; }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
