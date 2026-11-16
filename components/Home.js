@@ -30,9 +30,9 @@ const CARD_LABELS = { ...CAT_LABELS, basics: 'Business basics' };
 
 // Category cards rotate through the logo palette. Icon, label, and sticker tell them apart, so color never has to.
 const FILLS = [
-  { bg: 'bg-azure', text: 'text-white', sub: 'text-white/85', circle: 'bg-surface text-royal', sticker: 'cyan' },
+  { bg: 'bg-azure', text: 'text-white', sub: 'text-white', circle: 'bg-surface text-royal', sticker: 'cyan' },
   { bg: 'bg-royal', text: 'text-white', sub: 'text-white/85', circle: 'bg-surface text-royal', sticker: 'cyan' },
-  { bg: 'bg-cyan', text: 'text-royal', sub: 'text-royal/80', circle: 'bg-surface text-royal', sticker: 'white' },
+  { bg: 'bg-cyan', text: 'text-royal', sub: 'text-royal', circle: 'bg-surface text-royal', sticker: 'white' },
   { bg: 'bg-azure-soft', text: 'text-royal', sub: 'text-royal/75', circle: 'bg-surface text-royal', sticker: 'azure' },
   { bg: 'bg-cyan-soft', text: 'text-royal', sub: 'text-royal/75', circle: 'bg-surface text-royal', sticker: 'royal' },
 ];
@@ -252,15 +252,15 @@ export function Home({ st, ready = true, onStartDaily, onStartExtra, onStartRevi
       {week ? (
         <section className="relative rounded-[28px] bg-azure p-5 pt-6 text-white">
           <span className="pointer-events-none absolute -top-5 right-4"><Sticker fill="cyan" rotate={10} points={12} size={82}>This week</Sticker></span>
-          <p className="text-[13px] font-bold text-white/85">This week in business</p>
+          <p className="text-[13px] font-bold text-white">This week in business</p>
           <h3 className="mt-1.5 max-w-[15rem] text-[21px] font-bold leading-snug tracking-tight">{week.topic}</h3>
           {weekAnswered ? (
-            <p className="mt-2 flex items-center gap-1.5 text-sm font-medium text-white/90">
+            <p className="mt-2 flex items-center gap-1.5 text-sm font-medium text-white">
               <Check size={16} strokeWidth={2.5} />Answered. Check Review if you missed it.
             </p>
           ) : (
             <>
-              <p className="mt-1.5 text-sm font-medium text-white/90">One current-events question, refreshed every Monday.</p>
+              <p className="mt-1.5 text-sm font-medium text-white">One current-events question, refreshed every Monday.</p>
               <button className={`${PRIMARY} ${SIZE.md} mt-4`} onClick={onStartWeekly}>Answer it</button>
             </>
           )}
@@ -279,7 +279,7 @@ export function Home({ st, ready = true, onStartDaily, onStartExtra, onStartRevi
       <section className="rounded-[28px] bg-surface p-5">
         <div className="mb-3.5 flex items-center justify-between">
           <h3 className="text-base font-bold">This week</h3>
-          <button className="text-sm font-semibold text-royal underline underline-offset-4" onClick={() => goto('progress')}>Progress</button>
+          <button className="inline-flex min-h-11 items-center px-1 text-sm font-semibold text-royal underline underline-offset-4" onClick={() => goto('progress')}>Progress</button>
         </div>
         <div className="flex justify-between">
           {days.map((d) => {
@@ -293,7 +293,7 @@ export function Home({ st, ready = true, onStartDaily, onStartExtra, onStartRevi
                 {isToday ? (
                   <motion.button
                     aria-label="Today"
-                    className={cn('grid size-10 place-items-center rounded-full text-[14px] font-bold tabular-nums', on ? 'bg-cyan text-royal' : 'bg-royal text-white')}
+                    className={cn('grid size-11 place-items-center rounded-full text-[14px] font-bold tabular-nums', on ? 'bg-cyan text-royal' : 'bg-royal text-white')}
                     // tapping today's chip makes it bounce
                     whileTap={{ scale: 1.2 }}
                     transition={spring.bouncy}
@@ -301,7 +301,7 @@ export function Home({ st, ready = true, onStartDaily, onStartExtra, onStartRevi
                     {on ? <Check size={17} strokeWidth={3} /> : da}
                   </motion.button>
                 ) : (
-                  <div className={cn('grid size-10 place-items-center rounded-full', on ? 'bg-cyan text-royal' : 'bg-line')}>
+                  <div className={cn('grid size-11 place-items-center rounded-full', on ? 'bg-cyan text-royal' : 'bg-line')}>
                     {on ? <Check size={17} strokeWidth={3} /> : null}
                   </div>
                 )}

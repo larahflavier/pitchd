@@ -16,8 +16,8 @@ export default function Roadmap({ st }) {
 
   return (
     <section className="flex flex-col gap-3">
-      <div className="rounded-[32px] bg-periwinkle p-5 text-white">
-        <p className="text-[13px] font-bold text-white/90">Your plan</p>
+      <div className="rounded-[32px] bg-azure p-5 text-white">
+        <p className="text-[13px] font-bold text-white">Your plan</p>
         <h2 className="mt-1 text-[22px] font-bold leading-tight tracking-tight">{p.label}</h2>
         {!p.finished && <p className="mt-1 text-[15px] font-semibold">This week: {p.theme}</p>}
         {p.finished && <p className="mt-1 text-[15px] font-semibold">Keep practicing, or edit your goals in Account to start a new plan.</p>}
@@ -58,13 +58,13 @@ export default function Roadmap({ st }) {
           <h3 className="text-base font-bold">This week's mix</h3>
           <div className="mt-3 flex h-3 overflow-hidden rounded-full bg-line">
             {mix.map(([cat, w]) => (
-              <i key={cat} className={cn('h-full', MIX_COLORS[cat] || 'bg-periwinkle-strong')} style={{ width: `${w * 100}%` }} />
+              <i key={cat} className={cn('h-full', MIX_COLORS[cat] || 'bg-azure')} style={{ width: `${w * 100}%` }} />
             ))}
           </div>
           <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
             {mix.map(([cat, w]) => (
               <li key={cat} className="flex items-center gap-1.5 text-[13px] font-semibold">
-                <i className={cn('size-2.5 rounded-full', MIX_COLORS[cat] || 'bg-periwinkle-strong')} />
+                <i className={cn('size-2.5 rounded-full', MIX_COLORS[cat] || 'bg-azure')} />
                 {CAT_LABELS[cat]} {Math.round(w * 100)}%
               </li>
             ))}

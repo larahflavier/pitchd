@@ -121,7 +121,7 @@ export default function Review({ st, onOpenDeck, onOpenWip }) {
                       key={c}
                       onClick={() => setCat(c)}
                       aria-pressed={on}
-                      className={cn('shrink-0 rounded-full border-2 px-3.5 py-2 text-[13px] font-bold', on ? 'border-royal bg-azure-soft text-royal' : 'border-line text-muted-foreground')}
+                      className={cn('inline-flex min-h-11 shrink-0 items-center rounded-full border-2 px-3.5 text-[13px] font-bold', on ? 'border-royal bg-azure-soft text-royal' : 'border-line text-muted-foreground')}
                     >
                       {c === 'all' ? 'All' : CAT_LABELS[c]} <span className="tabular-nums">{n}</span>
                     </button>

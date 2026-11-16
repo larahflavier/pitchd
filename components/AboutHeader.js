@@ -29,7 +29,7 @@ export default function AboutHeader() {
 
   return (
     <div className="mb-3 flex items-center justify-between">
-      <button onClick={back} aria-label="Back" className="grid size-10 place-items-center rounded-full border border-line bg-surface">
+      <button onClick={back} aria-label="Back" className="grid size-11 place-items-center rounded-full border border-line bg-surface">
         <ArrowLeft size={18} strokeWidth={2.25} />
       </button>
       <SoundToggle on={on} onChange={change} />

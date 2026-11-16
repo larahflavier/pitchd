@@ -11,9 +11,10 @@
   --canvas: #e7e9f0;          /* page behind the phone frame */
   --app: #f4f5f9;             /* app background */
   --surface: #ffffff;         /* cards */
-  --ink: #111318;             /* text, primary buttons */
-  --muted: #6b7080;           /* secondary text */
+  --ink: #111318;             /* body text */
+  --muted: #5d6272;           /* secondary text (4.5:1 or better on every surface it sits on) */
   --line: #e3e6ee;            /* borders, empty tracks */
+
   /* Logo palette, sampled from public/brand/pitchd-logo-full.png */
   --royal: #042f97;           /* splash, hero cards, headings, button text and outlines */
   --azure: #0874c8;           /* feature cards, progress fills, links */
@@ -21,15 +22,11 @@
   --cyan: #14d4d4;            /* primary button fill, correct answers, streaks. Never text on light backgrounds */
   --cyan-soft: #d9f7f7;       /* correct-answer panel, soft chips */
 
-  /* Old names, kept as aliases while screens are rebuilt. Removed in step F10. */
-  --periwinkle: var(--azure);
-  --periwinkle-soft: var(--azure-soft);
-  --periwinkle-strong: var(--azure);
-  --teal: var(--cyan);
-  --teal-soft: var(--cyan-soft);
-  --red: #e5484d;             /* wrong answers */
+  /* Functional colors */
+  --red: #e5484d;             /* wrong answers: fills, borders, icons */
+  --red-strong: #c12a30;      /* red used as text (4.5:1 on white and on red-soft) */
   --red-soft: #fdecec;
-  --orange: #f59e42;          /* review / accent */
+  --orange: #f59e42;          /* review badges and due counts */
   --orange-soft: #fff0dd;
 
   /* shadcn variables, mapped onto the Pitchd palette so dropped-in
@@ -41,17 +38,17 @@
   --card-foreground: var(--ink);
   --popover: var(--surface);
   --popover-foreground: var(--ink);
-  --primary: var(--ink);
-  --primary-foreground: #ffffff;
-  --secondary: var(--periwinkle-soft);
-  --secondary-foreground: var(--ink);
+  --primary: var(--cyan);
+  --primary-foreground: var(--royal);
+  --secondary: var(--azure-soft);
+  --secondary-foreground: var(--royal);
   --muted-foreground: var(--muted);
-  --accent: var(--periwinkle);
-  --accent-foreground: var(--ink);
+  --accent: var(--azure);
+  --accent-foreground: #ffffff;
   --destructive: var(--red);
   --border: var(--line);
   --input: var(--line);
-  --ring: var(--periwinkle-strong);
+  --ring: var(--azure);
 }
 
 @theme inline {
@@ -67,12 +64,8 @@
   --color-azure-soft: var(--azure-soft);
   --color-cyan: var(--cyan);
   --color-cyan-soft: var(--cyan-soft);
-  --color-periwinkle: var(--periwinkle);
-  --color-periwinkle-soft: var(--periwinkle-soft);
-  --color-periwinkle-strong: var(--periwinkle-strong);
-  --color-teal: var(--teal);
-  --color-teal-soft: var(--teal-soft);
   --color-red: var(--red);
+  --color-red-strong: var(--red-strong);
   --color-red-soft: var(--red-soft);
   --color-orange: var(--orange);
   --color-orange-soft: var(--orange-soft);
@@ -123,9 +116,7 @@
 }
 
 /* =========================================================================
-   Existing screens, restyled with the tokens above.
-   These sit in the components layer so Tailwind utilities can override
-   them as screens are rebuilt one by one.
+   The app frame: a phone-width column. On wider screens it floats as a rounded phone.
    ========================================================================= */
 @layer components {
   .app {
@@ -140,104 +131,21 @@
     }
   }
   .main { flex: 1; }
-
-  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-  .stat { background: var(--surface); border-radius: 20px; padding: 12px 14px; }
-  .stat small { color: var(--muted); font-size: 12px; font-weight: 600; display: block; }
-  .stat b { font-size: 24px; font-weight: 700; letter-spacing: -.01em; }
-
-  /* buttons */
-  .btn {
-    width: 100%; border: 2px solid var(--royal); background: var(--cyan); color: var(--royal); font-weight: 700; font-size: 16px;
-    padding: 15px; border-radius: 999px; transition: transform .12s ease, opacity .12s ease;
-  }
-  .btn:active { transform: scale(.97); }
-  .btn:disabled { opacity: .35; }
-  .btn.secondary { background: var(--surface); color: var(--royal); }
-  .btn.ghost { background: none; border-color: transparent; color: var(--royal); padding: 12px; font-size: 15px; }
-  .btn.small { width: auto; padding: 10px 16px; font-size: 14px; }
-
-  /* cards */
-  .card { background: var(--surface); border-radius: 28px; padding: 18px; margin-bottom: 14px; }
-  .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-  .card p { color: var(--muted); font-size: 14px; line-height: 1.45; }
-
-  /* quiz */
-  .qtop { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .x {
-    border: 1px solid var(--line); background: var(--surface); width: 40px; height: 40px; border-radius: 50%;
-    display: grid; place-items: center; color: var(--ink);
-  }
-  .bar { flex: 1; height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
-  .bar i { display: block; height: 100%; background: var(--ink); border-radius: 99px; transition: width .3s ease; }
-  .count { font-weight: 700; font-size: 14px; color: var(--muted); min-width: 34px; text-align: right; }
-  .chip { display: inline-block; background: var(--periwinkle-soft); color: var(--ink); font-weight: 600; font-size: 12px; padding: 6px 12px; border-radius: 99px; margin-right: 6px; }
-  .chip.review { background: var(--orange-soft); color: #8a4b00; }
-  .qtext { font-size: 22px; line-height: 1.3; font-weight: 700; letter-spacing: -.01em; margin: 16px 0 20px; }
-  .opt {
-    display: block; width: 100%; text-align: left; background: var(--surface); border: 1.5px solid var(--line);
-    border-radius: 20px; padding: 16px 18px; font-size: 16px; font-weight: 500; line-height: 1.35; margin-bottom: 10px; color: var(--ink);
-    transition: border-color .15s ease, background .15s ease, transform .12s ease;
-  }
-  .opt:hover:not(:disabled):not(.right):not(.wrong):not(.dim) { border-color: var(--periwinkle); }
-  .opt:active { transform: scale(.99); }
-  .opt.right { border-color: var(--teal); background: var(--teal-soft); }
-  .opt.wrong { border-color: var(--red); background: var(--red-soft); }
-  .opt.dim { opacity: .5; }
-  .explain { background: var(--surface); border-radius: 20px; padding: 14px; margin: 6px 0 14px; font-size: 15px; line-height: 1.45; animation: pop .25s ease; }
-  .explain .ok { color: var(--royal); }
-  .explain .no { color: var(--red); }
-  .fbrow { display: flex; gap: 10px; align-items: flex-start; }
-  .combo { display: inline-block; margin: 0 8px 4px 0; padding: 3px 10px; border-radius: 99px; background: var(--teal-soft); color: var(--ink); font-size: 12px; font-weight: 700; animation: pop .25s ease; }
-  .combo-big { background: var(--teal); color: var(--ink); font-size: 14px; padding: 4px 14px; animation: pop .5s ease; }
-  .fbrow svg { flex-shrink: 0; width: 56px; height: auto; }
-
-  /* summary */
-  .center { text-align: center; }
-  .center > svg { margin-inline: auto; } /* Tailwind makes svg block-level */
-  .big { font-size: 52px; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
-  .summary-mascot { display: flex; justify-content: center; margin: 8px 0; animation: pop .4s ease; }
-  .misslist { text-align: left; margin-top: 10px; }
-  .misslist li { margin: 6px 0 0 18px; font-size: 14px; color: var(--muted); }
-
-  /* progress */
-  .row { display: grid; grid-template-columns: 112px 1fr 46px; gap: 8px; align-items: center; margin: 10px 0; font-size: 14px; font-weight: 600; }
-  .row em { font-style: normal; color: var(--muted); text-align: right; font-weight: 600; }
-  .meter { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
-  .meter i { display: block; height: 100%; background: var(--periwinkle-strong); border-radius: 99px; }
-  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
-  .cal div { aspect-ratio: 1; border-radius: 10px; background: var(--app); border: 1px solid var(--line); }
-  .cal div.on { background: var(--teal); border-color: var(--teal); }
-  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-  .kpis .stat { text-align: center; border: 1px solid var(--line); }
-  .list { list-style: none; }
-  .list li { display: flex; justify-content: space-between; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; line-height: 1.35; }
-  .list li:last-child { border: 0; }
-  .list small { color: var(--muted); white-space: nowrap; font-weight: 600; }
-
-  /* onboarding */
-  .tracks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 16px; }
-  .track { text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; padding: 14px; transition: border-color .15s ease; }
-  .track b { display: block; font-size: 15px; font-weight: 700; margin-bottom: 2px; }
-  .track small { color: var(--muted); font-size: 12px; line-height: 1.3; display: block; }
-  .track.sel { border-color: var(--ink); background: var(--periwinkle-soft); }
-  input.text { width: 100%; border: 1.5px solid var(--line); border-radius: 999px; padding: 14px 18px; font: inherit; font-size: 16px; margin-bottom: 14px; background: var(--surface); }
-  input.text:focus { outline: none; border-color: var(--periwinkle-strong); }
-  .hint { color: var(--muted); font-size: 13px; font-weight: 500; line-height: 1.4; }
-  .h1 { font-size: 28px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; }
-  .spacer { height: 10px; }
 }
 
-/* Answer flourishes. They start only after the tapped answer has already painted. */
+/* =========================================================================
+   Keyframes. Transform and opacity only. Answer flourishes start only after
+   the tapped answer has already painted.
+   ========================================================================= */
 @keyframes opt-wipe { from { transform: scale(0); } to { transform: scale(1); } }
 .opt-wipe { transform-origin: var(--wx, 50%) var(--wy, 50%); animation: opt-wipe 0.26s ease-out forwards; }
 @keyframes opt-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 .opt-shake { animation: opt-shake 0.125s ease-in-out 2; }
 @keyframes ring-sweep { from { stroke-dashoffset: var(--ring-c); } to { stroke-dashoffset: var(--ring-to); } }
 .ring-sweep { animation: ring-sweep .6s ease-out both; }
-@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes pop { 0% { transform: scale(.9); opacity: 0; } 60% { transform: scale(1.04); } 100% { transform: scale(1); opacity: 1; } }
 
+/* Respect the phone's reduced-motion setting: no CSS animations or transitions. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

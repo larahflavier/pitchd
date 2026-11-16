@@ -121,7 +121,7 @@ export default function Summary({ kind, results, st, bonus, onOpenBonus, onHome,
       {dueTomorrow > 0 && (
         <button
           onClick={onReview}
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-orange px-4 py-2.5 text-[14px] font-bold text-ink"
+          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-orange px-4 text-[14px] font-bold text-ink"
         >
           <RotateCcw size={16} strokeWidth={2.5} />
           {dueTomorrow} {dueTomorrow === 1 ? 'card' : 'cards'} due tomorrow

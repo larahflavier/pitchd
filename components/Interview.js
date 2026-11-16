@@ -17,7 +17,7 @@ import Sticker from './ui/Sticker';
 
 const PILL = `${PRIMARY} ${SIZE.lg} w-full`;
 const PREMIUM_TAG = (
-  <span className="inline-flex items-center gap-1 rounded-full bg-periwinkle-soft px-2 py-0.5 text-[11px] font-bold">
+  <span className="inline-flex items-center gap-1 rounded-full bg-azure-soft px-2 py-0.5 text-[11px] font-bold">
     <Lock size={11} strokeWidth={2.5} />Premium
   </span>
 );
@@ -25,7 +25,7 @@ const PREMIUM_TAG = (
 function Chip({ on, onClick, children }) {
   return (
     <button onClick={onClick} aria-pressed={on}
-      className={cn('rounded-full border-2 px-4 py-2.5 text-sm font-semibold', on ? 'border-ink bg-periwinkle-soft' : 'border-line bg-surface')}>
+      className={cn('inline-flex min-h-11 items-center rounded-full border-2 px-4 text-sm font-semibold', on ? 'border-royal bg-azure-soft' : 'border-line bg-surface')}>
       {children}
     </button>
   );
@@ -88,7 +88,7 @@ export default function Interview({ st, onUpdate, onImmersive, onOpenWip }) {
     return (
       <div className="main flex flex-col gap-5">
         <div className="flex items-center gap-3">
-          <button onClick={() => setView('hub')} aria-label="Back" className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface">
+          <button onClick={() => setView('hub')} aria-label="Back" className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface">
             <ArrowLeft size={18} strokeWidth={2.25} />
           </button>
           <h1 className="text-[22px] font-bold tracking-tight">Mock interview</h1>
@@ -148,7 +148,7 @@ export default function Interview({ st, onUpdate, onImmersive, onOpenWip }) {
           <div className="p-5 pb-11">
             <span className="grid size-12 place-items-center rounded-full bg-surface text-royal"><Zap size={22} strokeWidth={2} /></span>
             <h2 className="mt-3 text-[26px] font-bold leading-tight tracking-tight">Quick drill</h2>
-            <p className="mt-1 text-sm font-medium text-white/90">3 questions. Type your answer, then compare it to the model answer.</p>
+            <p className="mt-1 text-sm font-medium text-white">3 questions. Type your answer, then compare it to the model answer.</p>
             <button className={`${PRIMARY} ${SIZE.md} mt-4`} onClick={startDrill}>Start</button>
           </div>
           <span className="pointer-events-none absolute -top-3.5 right-4"><Sticker fill="cyan" rotate={9} size={62}>Free</Sticker></span>

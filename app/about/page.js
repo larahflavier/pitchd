@@ -33,7 +33,7 @@ export default function AboutPage() {
     <div className="app">
       <AboutHeader />
       <main className="main flex flex-col gap-5 pb-6">
-        <header className="rounded-[32px] bg-periwinkle p-6 text-white">
+        <header className="rounded-[32px] bg-azure p-6 text-white">
           <h1 className="text-[28px] font-bold leading-tight tracking-tight">{ABOUT.title}</h1>
           <p className="mt-2 text-[15px] font-semibold leading-relaxed">{ABOUT.intro}</p>
         </header>
@@ -69,7 +69,7 @@ export default function AboutPage() {
           </ul>
         </section>
 
-        <section aria-labelledby="honest" className="rounded-[24px] bg-periwinkle-soft p-5">
+        <section aria-labelledby="honest" className="rounded-[24px] bg-azure-soft p-5">
           <h2 id="honest" className="text-[20px] font-bold tracking-tight">The honest version</h2>
           <p className="mt-2 text-[15px] font-medium leading-relaxed">{ABOUT.honest}</p>
         </section>

@@ -10,7 +10,7 @@ import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 const FIELD = 'w-full rounded-2xl border-2 border-line bg-surface px-4 py-3 text-[15px] font-semibold outline-none focus:border-ink';
 const PREMIUM_TAG = (
-  <span className="inline-flex items-center gap-1 rounded-full bg-periwinkle-soft px-2 py-0.5 text-[11px] font-bold">
+  <span className="inline-flex items-center gap-1 rounded-full bg-azure-soft px-2 py-0.5 text-[11px] font-bold text-royal">
     <Lock size={11} strokeWidth={2.5} />Premium
   </span>
 );
@@ -32,7 +32,7 @@ function Label({ children }) {
 function Chip({ on, onClick, children }) {
   return (
     <button onClick={onClick} aria-pressed={on}
-      className={cn('rounded-full border-2 px-3.5 py-2 text-[13px] font-semibold', on ? 'border-ink bg-periwinkle-soft' : 'border-line')}>
+      className={cn('inline-flex min-h-11 items-center rounded-full border-2 px-3.5 text-[13px] font-semibold', on ? 'border-royal bg-azure-soft' : 'border-line')}>
       {children}
     </button>
   );
@@ -40,9 +40,10 @@ function Chip({ on, onClick, children }) {
 
 function Switch({ on, onChange, label }) {
   return (
-    <button role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)}
-      className={cn('relative h-7 w-12 shrink-0 rounded-full transition-colors motion-reduce:transition-none', on ? 'bg-royal' : 'bg-line')}>
-      <i className={cn('absolute top-0.5 size-6 rounded-full bg-surface transition-[left] motion-reduce:transition-none', on ? 'left-[22px]' : 'left-0.5')} />
+    <button role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} className="grid h-11 w-14 shrink-0 place-items-center">
+      <span className={cn('relative block h-7 w-12 rounded-full transition-colors motion-reduce:transition-none', on ? 'bg-royal' : 'bg-line')}>
+        <i className={cn('absolute top-0.5 size-6 rounded-full bg-surface transition-[left] motion-reduce:transition-none', on ? 'left-[22px]' : 'left-0.5')} />
+      </span>
     </button>
   );
 }
@@ -181,7 +182,7 @@ export default function Account({ st, onPatch, onSaveGoals, onReset, onOpenWip }
           <span className="text-[15px] font-semibold">Daily reminder</span>
           <Switch on={st.remindOn} onChange={toggleReminders} label="Daily reminder" />
         </div>
-        {permNote && <p className="text-[13px] font-semibold text-red">{permNote}</p>}
+        {permNote && <p className="text-[13px] font-semibold text-red-strong">{permNote}</p>}
         <label>
           <Label>Time of day</Label>
           <input type="time" className={FIELD} value={st.remindAt} onChange={(e) => e.target.value && onPatch({ remindAt: e.target.value })} />
@@ -215,7 +216,7 @@ export default function Account({ st, onPatch, onSaveGoals, onReset, onOpenWip }
       <Section title="Plan">
         <div className="flex items-center justify-between">
           <span className="text-[15px] font-semibold">Current plan</span>
-          <span className="rounded-full bg-teal-soft px-3 py-1 text-[13px] font-bold">{st.tier === 'premium' ? 'Premium' : 'Free'}</span>
+          <span className="rounded-full bg-cyan-soft px-3 py-1 text-[13px] font-bold">{st.tier === 'premium' ? 'Premium' : 'Free'}</span>
         </div>
       </Section>
 
@@ -241,7 +242,7 @@ export default function Account({ st, onPatch, onSaveGoals, onReset, onOpenWip }
         </button>
         <button
           onClick={() => { if (window.confirm('Delete all your Pitchd data on this device? This cannot be undone.')) onReset(); }}
-          className="inline-flex items-center justify-center gap-2 py-2 text-[15px] font-semibold text-red"
+          className="inline-flex min-h-11 items-center justify-center gap-2 text-[15px] font-semibold text-red-strong"
         >
           <Trash2 size={16} strokeWidth={2.25} />Delete my data
         </button>

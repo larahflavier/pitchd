@@ -24,6 +24,7 @@ Specs: `docs/PRODUCT_PLAN.md` (features and science) and `docs/FUNK_PASS_PLAN.md
 - `data/questions.json`, `data/weekly.json`: question bank. Run `npm run validate` after editing. New questions start with `reviewedBy: "pending"` until a person checks them.
 - `public/brand/`: logo files (see Design system)
 - `lib/motion.js`: shared springs. `lib/pip.js`: Pip reactions.
+- Development only: `?reduce=1` on any URL makes the app behave as if reduce-motion were on (see `app/layout.js`). `window.__pitchdSound` lets sounds be rendered offline and measured. Both are compiled out of production builds.
 - `components/WorkInProgress.js` and `data/roadmap.json`: the Work in progress page. Every lock or "not built" entry point opens it with `onOpenWip(id)`. Statuses live in the JSON.
 
 ## Design system
@@ -33,7 +34,9 @@ All tokens are in `app/globals.css` (`:root` and `@theme inline`). Use them; do 
 - App background `--app` #f4f5f9, cards white (`--surface`), borders `--line`
 - Logo palette: `--royal` (splash, hero cards, headings, button text and outlines), `--azure` (feature cards, progress fills), `--azure-soft` (chips, selected states), `--cyan` (primary button fill, correct answers, streaks), `--cyan-soft` (correct-answer panel)
 - Cyan is a fill. Never use it as text or an icon on a light background (about 1.8:1). Use `--royal` text on cyan. White text on royal and on azure both pass.
-- Old names `--periwinkle`, `--periwinkle-soft`, `--periwinkle-strong`, `--teal`, `--teal-soft` still work as aliases of the new tokens. They are removed in funk pass step F10, so use the new names in new code.
+- The old names (`periwinkle`, `teal`, `pink`) are gone. Use the logo palette above. `--red-strong` is the red to use for red text; `--red` is for fills, borders, and icons.
+- Contrast: text must be 4.5:1 (3:1 if 24px or 18.66px bold). Small text on `--azure` must be full white (translucent white fails). Small text on cyan must be `--royal` at 85% or more. `--muted` is already tuned to pass on `--app`, white, and `--azure-soft`.
+- Tap targets are at least 44px. Use `size-11` or `min-h-11` on small buttons and chips.
 - Primary buttons: cyan pill, royal text, 2px royal border (use `PRIMARY` and `SIZE` from `components/ui/button-styles.js`). Secondary: white pill, 2px royal border (`SECONDARY`).
 - Wrong answers: `--red`; review badges: `--orange`. Right and wrong never rely on color alone: use a `Check` or `X` icon too.
 - Font: Plus Jakarta Sans Variable, weights 500–700. Avoid 800.
@@ -42,7 +45,7 @@ All tokens are in `app/globals.css` (`:root` and `@theme inline`). Use them; do 
 - Logo files are in `public/brand/`. The logo appears on the splash and onboarding only. The logo's gradient stays inside the image files; the UI stays flat.
 - Motion: use `lib/motion.js` springs. Animate only transform and opacity. Nothing animates before the answer state paints. Respect reduced motion.
 
-Older screens still use the class names in the `@layer components` block of `globals.css`. New or rebuilt UI should use Tailwind utilities with the tokens (`bg-royal`, `text-royal`, `border-line`, etc.).
+`globals.css` holds the tokens, the phone frame (`.app`, `.main`), a few keyframes, and the reduced-motion rule. Everything else is Tailwind utilities with the tokens (`bg-royal`, `text-royal`, `border-line`, etc.).
 
 shadcn is configured in `components.json` with `tsx: false`, so components added with `npx shadcn@latest add ...` (including 21st.dev URLs) come in as `.jsx` under `components/ui`.
 

@@ -103,7 +103,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
   return (
     <div className="main flex flex-col" key={q.id}>
       <div className="mb-4 flex items-center gap-3">
-        <button onClick={onClose} aria-label="Close" className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface">
+        <button onClick={onClose} aria-label="Close" className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface">
           <X size={18} strokeWidth={2.25} />
         </button>
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-line">
@@ -147,7 +147,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
                   onPointerDown={(e) => e.stopPropagation()}
                   onPointerUp={(e) => e.stopPropagation()}
                   onClick={() => onToggleSave(q.id)}
-                  className="grid size-9 place-items-center rounded-full bg-app"
+                  className="grid size-11 place-items-center rounded-full bg-app"
                 >
                   <Bookmark size={17} strokeWidth={2.25} className={isSaved ? 'fill-royal' : ''} />
                 </button>
@@ -191,7 +191,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
       <div className="mt-5 min-h-[56px]">
         {flipped ? (
           <div className="grid grid-cols-2 gap-3">
-            <button onClick={() => grade(false)} className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-red bg-red-soft py-4 text-base font-bold text-red active:scale-[0.97]">
+            <button onClick={() => grade(false)} className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-red bg-red-soft py-4 text-base font-bold text-red-strong active:scale-[0.97]">
               <RotateCcw size={18} strokeWidth={2.25} />Again
             </button>
             <button onClick={() => grade(true)} className={`${PRIMARY} ${SIZE.lg}`}>

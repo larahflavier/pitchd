@@ -15,7 +15,7 @@ export default function SoundToggle({ on, onChange }) {
       onClick={toggle}
       aria-label={on ? 'Sound on. Tap to mute.' : 'Sound off. Tap to turn on.'}
       aria-pressed={on}
-      className="pointer-events-auto grid size-9 place-items-center rounded-full border border-line bg-surface text-ink active:scale-95"
+      className="pointer-events-auto grid size-11 place-items-center rounded-full border border-line bg-surface text-ink active:scale-95"
     >
       {on ? <Volume2 size={17} strokeWidth={2.25} /> : <VolumeX size={17} strokeWidth={2.25} className="text-muted-foreground" />}
     </button>

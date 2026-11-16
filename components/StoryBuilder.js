@@ -44,7 +44,7 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing, onOpenWi
     return (
       <div className="main flex flex-col gap-4">
         <div className="flex items-center gap-3">
-          <button onClick={() => setDraft(null)} aria-label="Back" className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface">
+          <button onClick={() => setDraft(null)} aria-label="Back" className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface">
             <ArrowLeft size={18} strokeWidth={2.25} />
           </button>
           <h1 className="text-[22px] font-bold tracking-tight">{isNew ? 'New story' : 'Edit story'}</h1>
@@ -68,7 +68,7 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing, onOpenWi
               const on = tags.includes(t.id);
               return (
                 <button key={t.id} onClick={() => toggleTag(t.id)} aria-pressed={on}
-                  className={cn('rounded-full border-2 px-3.5 py-2 text-[13px] font-semibold', on ? 'border-ink bg-periwinkle-soft' : 'border-line')}>
+                  className={cn('inline-flex min-h-11 items-center rounded-full border-2 px-3.5 text-[13px] font-semibold', on ? 'border-royal bg-azure-soft' : 'border-line')}>
                   {t.label}
                 </button>
               );
@@ -89,7 +89,7 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing, onOpenWi
               return (
                 <li key={c}>
                   <button onClick={() => toggleCheck(c)} aria-pressed={on}
-                    className={cn('flex w-full items-start gap-3 rounded-2xl border-2 p-3 text-left text-[14px] font-semibold', on ? 'border-teal bg-teal-soft' : 'border-line')}>
+                    className={cn('flex w-full items-start gap-3 rounded-2xl border-2 p-3 text-left text-[14px] font-semibold', on ? 'border-cyan bg-cyan-soft' : 'border-line')}>
                     <span className={cn('mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2', on ? 'border-royal bg-cyan text-royal' : 'border-line')}>
                       {on && <Check size={13} strokeWidth={3.5} />}
                     </span>
@@ -112,7 +112,7 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing, onOpenWi
         <button className={PILL} disabled={empty} onClick={save}>Save story</button>
         {!isNew && (
           <button
-            className="inline-flex items-center justify-center gap-2 py-2 text-[15px] font-semibold text-red"
+            className="inline-flex min-h-11 items-center justify-center gap-2 text-[15px] font-semibold text-red-strong"
             onClick={() => { if (window.confirm('Delete this story?')) { onUpdate((s) => deleteStory(s, draft.id)); setDraft(null); } }}
           >
             <Trash2 size={16} strokeWidth={2.25} />Delete story
@@ -131,7 +131,7 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing, onOpenWi
   return (
     <div className="main flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <button onClick={onBack} aria-label="Back" className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface">
+        <button onClick={onBack} aria-label="Back" className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface">
           <ArrowLeft size={18} strokeWidth={2.25} />
         </button>
         <h1 className="text-[22px] font-bold tracking-tight">Story builder</h1>
@@ -147,7 +147,7 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing, onOpenWi
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           {THEMES.map((t) => (
-            <span key={t.id} className={cn('inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-semibold', covered.has(t.id) ? 'bg-teal-soft' : 'border border-line text-muted-foreground')}>
+            <span key={t.id} className={cn('inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[13px] font-semibold', covered.has(t.id) ? 'bg-cyan-soft' : 'border border-line text-muted-foreground')}>
               {covered.has(t.id) && <Check size={12} strokeWidth={3} />}{t.label}
             </span>
           ))}
@@ -160,7 +160,7 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing, onOpenWi
             <button onClick={() => setDraft({ ...s })} className="w-full rounded-[24px] bg-surface p-4 text-left active:scale-[0.99]">
               <span className="block text-base font-bold">{s.title || 'Untitled story'}</span>
               <span className="mt-2 flex flex-wrap gap-1.5">
-                {storyTags(s).map((id) => <span key={id} className="rounded-full bg-periwinkle-soft px-2.5 py-0.5 text-[12px] font-semibold">{themeById[id].label}</span>)}
+                {storyTags(s).map((id) => <span key={id} className="rounded-full bg-azure-soft px-2.5 py-0.5 text-[12px] font-semibold">{themeById[id].label}</span>)}
                 {storyTags(s).length === 0 && <span className="text-[12px] font-medium text-muted-foreground">No tags yet</span>}
               </span>
             </button>

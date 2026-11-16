@@ -72,7 +72,7 @@ function Chip({ selected, onClick, children }) {
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
-        'rounded-full border-2 px-4 py-2.5 text-sm font-semibold',
+        'inline-flex min-h-11 items-center rounded-full border-2 px-4 text-sm font-semibold',
         selected ? 'border-royal bg-azure-soft' : 'border-line bg-surface',
       )}
     >
@@ -207,8 +207,8 @@ export default function Onboarding({ initial, initialTrack, ready = true, onOpen
               </div>
               <button className={`${PILL} relative`} onClick={() => setStep(1)}>Get started</button>
               <div className="mt-4 flex flex-col items-center gap-2.5 text-[15px] font-semibold">
-                <button className="underline underline-offset-4" onClick={() => onOpenWip?.('accounts')}>I already have an account</button>
-                <Link href="/about" className="text-white/90 underline underline-offset-4">Why it works</Link>
+                <button className="inline-flex min-h-11 items-center underline underline-offset-4" onClick={() => onOpenWip?.('accounts')}>I already have an account</button>
+                <Link href="/about" className="inline-flex min-h-11 items-center text-white/90 underline underline-offset-4">Why it works</Link>
               </div>
             </div>
           </>
@@ -219,7 +219,7 @@ export default function Onboarding({ initial, initialTrack, ready = true, onOpen
                 <motion.div layoutId="brand-bubble" className="aspect-[660/631] h-11" transition={spring.soft}>
                   <Image src="/brand/pitchd-bubble.png" width={660} height={631} alt="Pitchd" className="h-full w-full" />
                 </motion.div>
-                <button onClick={back} aria-label="Back" className="grid size-9 place-items-center rounded-full bg-white/15 text-white active:scale-95">
+                <button onClick={back} aria-label="Back" className="grid size-11 place-items-center rounded-full bg-white/15 text-white active:scale-95">
                   <ChevronLeft size={19} strokeWidth={2.5} />
                 </button>
               </div>

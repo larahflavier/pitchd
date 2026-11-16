@@ -94,7 +94,7 @@ export default function InterviewSession({ title, items, seconds = 0, onFinish, 
   return (
     <div className="main flex flex-col" key={idx}>
       <div className="mb-4 flex items-center gap-3">
-        <button onClick={exit} aria-label="Close" className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface">
+        <button onClick={exit} aria-label="Close" className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface">
           <X size={18} strokeWidth={2.25} />
         </button>
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-line">
@@ -104,9 +104,9 @@ export default function InterviewSession({ title, items, seconds = 0, onFinish, 
       </div>
 
       <div className="mb-3 flex items-center justify-between">
-        <span className="rounded-full bg-periwinkle-soft px-3 py-1 text-xs font-bold">{CAT_LABELS[item.cat] || item.cat}</span>
+        <span className="rounded-full bg-azure-soft px-3 py-1 text-xs font-bold">{CAT_LABELS[item.cat] || item.cat}</span>
         {seconds > 0 && phase === 'answer' && (
-          <span className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-bold', left <= 15 ? 'bg-red-soft text-red' : 'bg-surface')} role="timer">
+          <span className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-bold', left <= 15 ? 'bg-red-soft text-red-strong' : 'bg-surface')} role="timer">
             <Clock size={14} strokeWidth={2.25} />{fmt(left)}
           </span>
         )}
@@ -133,7 +133,7 @@ export default function InterviewSession({ title, items, seconds = 0, onFinish, 
               <p className="mt-1 whitespace-pre-wrap text-[15px] font-medium leading-relaxed">{text}</p>
             </div>
           )}
-          <div className="rounded-[20px] bg-teal-soft p-4">
+          <div className="rounded-[20px] bg-cyan-soft p-4">
             <p className="text-xs font-bold text-ink/70">Model answer</p>
             <p className="mt-1 whitespace-pre-wrap text-[15px] font-semibold leading-relaxed">{item.model}</p>
             {item.explanation && <p className="mt-2 text-[14px] font-medium leading-relaxed text-ink/70">{item.explanation}</p>}
@@ -153,7 +153,7 @@ export default function InterviewSession({ title, items, seconds = 0, onFinish, 
                       <button
                         onClick={() => toggle(i)}
                         aria-pressed={on}
-                        className={cn('flex w-full items-start gap-3 rounded-2xl border-2 p-3 text-left text-[14px] font-semibold', on ? 'border-teal bg-teal-soft' : 'border-line')}
+                        className={cn('flex w-full items-start gap-3 rounded-2xl border-2 p-3 text-left text-[14px] font-semibold', on ? 'border-cyan bg-cyan-soft' : 'border-line')}
                       >
                         <span className={cn('mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2', on ? 'border-royal bg-cyan text-royal' : 'border-line')}>
                           {on && <Check size={13} strokeWidth={3.5} />}
@@ -174,7 +174,7 @@ export default function InterviewSession({ title, items, seconds = 0, onFinish, 
                     key={r.id}
                     onClick={() => setMark({ rating: r.id })}
                     aria-pressed={mark.rating === r.id}
-                    className={cn('rounded-2xl border-2 px-2 py-3 text-[13px] font-bold', mark.rating === r.id ? 'border-ink bg-periwinkle-soft' : 'border-line')}
+                    className={cn('rounded-2xl border-2 px-2 py-3 text-[13px] font-bold', mark.rating === r.id ? 'border-royal bg-azure-soft' : 'border-line')}
                   >
                     {r.label}
                   </button>

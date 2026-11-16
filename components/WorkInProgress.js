@@ -31,7 +31,7 @@ export default function WorkInProgress({ interest = {}, onInterest, onBack, focu
         style={{ marginTop: 'calc(-1 * (env(safe-area-inset-top) + 18px))', paddingTop: 'calc(env(safe-area-inset-top) + 14px)' }}
       >
         <div className="flex items-center justify-between">
-          <button onClick={onBack} aria-label="Back" className="grid size-10 place-items-center rounded-full bg-white/15 text-white">
+          <button onClick={onBack} aria-label="Back" className="grid size-11 place-items-center rounded-full bg-white/15 text-white">
             <ChevronLeft size={20} strokeWidth={2.5} />
           </button>
           <SoundToggle on={soundOn} onChange={onSound} />

@@ -95,7 +95,7 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
 
       {/* top bar: close, one segment per question, count */}
       <div className="mb-8 flex items-center gap-3">
-        <button onClick={onClose} aria-label="Close" className="grid size-10 shrink-0 place-items-center rounded-full bg-surface text-royal">
+        <button onClick={onClose} aria-label="Close" className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-royal">
           <X size={18} strokeWidth={2.5} />
         </button>
         <div className="flex flex-1 gap-1" role="progressbar" aria-valuemin={0} aria-valuemax={ids.length} aria-valuenow={done}>
@@ -151,7 +151,7 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
                   aria-label={isSaved ? 'Remove bookmark' : 'Bookmark this question'}
                   aria-pressed={isSaved}
                   onClick={() => onToggleSave(q.id)}
-                  className="absolute bottom-3 right-3 grid size-10 place-items-center rounded-full bg-app text-royal"
+                  className="absolute bottom-2 right-2 grid size-11 place-items-center rounded-full bg-app text-royal"
                 >
                   <Bookmark size={17} strokeWidth={2.25} className={isSaved ? 'fill-royal' : ''} />
                 </button>
@@ -176,7 +176,7 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
                       isPick && 'border-royal',
                       isRight && 'border-royal bg-cyan-soft',
                       isWrongPick && 'border-red',
-                      answered && !isRight && !isPick && 'opacity-55',
+                      answered && !isRight && !isPick && 'opacity-70',
                       isWrongPick && 'opt-shake',
                     )}
                   >
