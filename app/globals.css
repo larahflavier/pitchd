@@ -14,16 +14,23 @@
   --ink: #111318;             /* text, primary buttons */
   --muted: #6b7080;           /* secondary text */
   --line: #e3e6ee;            /* borders, empty tracks */
-  --periwinkle: #9aaeff;      /* hero and highlight cards */
-  --periwinkle-soft: #e1e7ff; /* chips, selected states */
-  --periwinkle-strong: #5c74ec; /* progress fills, links */
-  --teal: #10aebb;            /* correct answers, streaks (from the logo) */
-  --teal-soft: #dcf5f7;
+  /* Logo palette, sampled from public/brand/pitchd-logo-full.png */
+  --royal: #042f97;           /* splash, hero cards, headings, button text and outlines */
+  --azure: #0874c8;           /* feature cards, progress fills, links */
+  --azure-soft: #e0eefa;      /* chips, selected states, soft backdrops */
+  --cyan: #14d4d4;            /* primary button fill, correct answers, streaks. Never text on light backgrounds */
+  --cyan-soft: #d9f7f7;       /* correct-answer panel, soft chips */
+
+  /* Old names, kept as aliases while screens are rebuilt. Removed in step F10. */
+  --periwinkle: var(--azure);
+  --periwinkle-soft: var(--azure-soft);
+  --periwinkle-strong: var(--azure);
+  --teal: var(--cyan);
+  --teal-soft: var(--cyan-soft);
   --red: #e5484d;             /* wrong answers */
   --red-soft: #fdecec;
   --orange: #f59e42;          /* review / accent */
   --orange-soft: #fff0dd;
-  --pink: #f2b5e3;            /* category accent */
 
   /* shadcn variables, mapped onto the Pitchd palette so dropped-in
      components match without restyling */
@@ -55,6 +62,11 @@
   --color-surface: var(--surface);
   --color-ink: var(--ink);
   --color-line: var(--line);
+  --color-royal: var(--royal);
+  --color-azure: var(--azure);
+  --color-azure-soft: var(--azure-soft);
+  --color-cyan: var(--cyan);
+  --color-cyan-soft: var(--cyan-soft);
   --color-periwinkle: var(--periwinkle);
   --color-periwinkle-soft: var(--periwinkle-soft);
   --color-periwinkle-strong: var(--periwinkle-strong);
@@ -64,7 +76,6 @@
   --color-red-soft: var(--red-soft);
   --color-orange: var(--orange);
   --color-orange-soft: var(--orange-soft);
-  --color-pink: var(--pink);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -130,13 +141,13 @@
 
   /* buttons */
   .btn {
-    width: 100%; border: 0; background: var(--ink); color: #fff; font-weight: 600; font-size: 16px;
-    padding: 17px; border-radius: 999px; transition: transform .12s ease, opacity .12s ease;
+    width: 100%; border: 2px solid var(--royal); background: var(--cyan); color: var(--royal); font-weight: 700; font-size: 16px;
+    padding: 15px; border-radius: 999px; transition: transform .12s ease, opacity .12s ease;
   }
-  .btn:active { transform: scale(.98); }
+  .btn:active { transform: scale(.97); }
   .btn:disabled { opacity: .35; }
-  .btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
-  .btn.ghost { background: none; color: var(--periwinkle-strong); padding: 12px; font-size: 15px; }
+  .btn.secondary { background: var(--surface); color: var(--royal); }
+  .btn.ghost { background: none; border-color: transparent; color: var(--royal); padding: 12px; font-size: 15px; }
   .btn.small { width: auto; padding: 10px 16px; font-size: 14px; }
 
   /* cards */
@@ -167,7 +178,7 @@
   .opt.wrong { border-color: var(--red); background: var(--red-soft); }
   .opt.dim { opacity: .5; }
   .explain { background: var(--surface); border-radius: 20px; padding: 14px; margin: 6px 0 14px; font-size: 15px; line-height: 1.45; animation: pop .25s ease; }
-  .explain .ok { color: var(--teal); }
+  .explain .ok { color: var(--royal); }
   .explain .no { color: var(--red); }
   .fbrow { display: flex; gap: 10px; align-items: flex-start; }
   .combo { display: inline-block; margin: 0 8px 4px 0; padding: 3px 10px; border-radius: 99px; background: var(--teal-soft); color: var(--ink); font-size: 12px; font-weight: 700; animation: pop .25s ease; }

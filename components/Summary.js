@@ -8,6 +8,7 @@ import { byId, currentStreak, setSize, todayStr } from '@/lib/engine';
 import { levelProgress } from '@/lib/gamify';
 import { play, vibrate } from '@/lib/sound';
 import { smallBurst } from '@/lib/celebrate';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 function CountUp({ to }) {
   const reduce = useReducedMotion();
@@ -56,8 +57,8 @@ export default function Summary({ kind, results, st, bonus, onOpenBonus, onHome,
       {daily ? (
         <div className="mb-2 mt-1 flex justify-center">
           <div ref={ringRef}>
-            <ProgressRing value={results.length} max={results.length} size={112} stroke={9} trackClass="stroke-line" fillClass="stroke-teal" animate>
-              <Check size={38} strokeWidth={3} className="text-teal" />
+            <ProgressRing value={results.length} max={results.length} size={112} stroke={9} trackClass="stroke-line" fillClass="stroke-azure" animate>
+              <Check size={38} strokeWidth={3} className="text-royal" />
             </ProgressRing>
           </div>
         </div>
@@ -75,7 +76,7 @@ export default function Summary({ kind, results, st, bonus, onOpenBonus, onHome,
             <div className="stat"><small>Streak</small><b>{streak}</b></div>
             <div className="stat"><small>Best</small><b>{st.best}</b></div>
           </div>
-          <div className="mb-3.5 flex items-center justify-between rounded-[24px] bg-periwinkle p-4 text-left">
+          <div className="mb-3.5 flex items-center justify-between rounded-[24px] bg-periwinkle p-4 text-left text-white">
             <span className="flex items-center gap-2 text-[15px] font-bold"><Zap size={18} strokeWidth={2.25} />+<CountUp to={xpToday} /> XP today</span>
             <span className="text-[13px] font-bold">Level {lvl.level} · {lvl.into}/{lvl.span}</span>
           </div>
@@ -92,7 +93,7 @@ export default function Summary({ kind, results, st, bonus, onOpenBonus, onHome,
               <p className="mt-1 text-[14px] font-medium text-ink/70">
                 {bonus.kind === 'question' ? 'A bonus question. Get it right for double XP.' : 'A fun fact for the road.'}
               </p>
-              <button className="mt-3 inline-flex rounded-full bg-ink px-5 py-2.5 text-[14px] font-semibold text-white active:scale-[0.98]" onClick={open}>
+              <button className={`${PRIMARY} ${SIZE.sm} mt-3`} onClick={open}>
                 {bonus.kind === 'question' ? 'Try it' : 'Open'}
               </button>
             </>

@@ -6,6 +6,7 @@ import { BadgeIcon } from './Badges';
 import { badgeById } from '@/lib/badges';
 import { play, vibrate } from '@/lib/sound';
 import { bigBurst } from '@/lib/celebrate';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 // Level-up and badge pop-ups. They queue while you are answering and show on the next calm screen,
 // so nothing ever interrupts a question.
@@ -84,7 +85,7 @@ export default function Celebrations({ events, idle, onNext }) {
             <button
               autoFocus
               onClick={onNext}
-              className="mt-6 w-full rounded-full bg-ink py-3.5 text-[15px] font-semibold text-white active:scale-[0.98]"
+              className={`${PRIMARY} ${SIZE.md} mt-6 w-full`}
             >
               {events.length > 1 ? 'Next' : 'Nice'}
             </button>

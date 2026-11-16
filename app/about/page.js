@@ -33,7 +33,7 @@ export default function AboutPage() {
     <div className="app">
       <AboutHeader />
       <main className="main flex flex-col gap-5 pb-6">
-        <header className="rounded-[32px] bg-periwinkle p-6">
+        <header className="rounded-[32px] bg-periwinkle p-6 text-white">
           <h1 className="text-[28px] font-bold leading-tight tracking-tight">{ABOUT.title}</h1>
           <p className="mt-2 text-[15px] font-semibold leading-relaxed">{ABOUT.intro}</p>
         </header>

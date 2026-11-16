@@ -15,6 +15,7 @@ import SkillMap from './SkillMap';
 import Badges from './Badges';
 import { describePlan } from '@/lib/curriculum';
 import { levelProgress, freezesLeft } from '@/lib/gamify';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 /* --------------------------------- Home --------------------------------- */
 const CAT_ICONS = {
@@ -23,7 +24,7 @@ const CAT_ICONS = {
   finance: Landmark, mechanical: Cog, electrical: Cpu, industrial: Factory, engfund: Wrench,
 };
 const CHIP_LABELS = { ...CAT_LABELS, basics: 'Basics', engfund: 'Fundamentals', electrical: 'Electrical', industrial: 'Industrial' };
-const PILL = 'inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-[15px] font-semibold text-white active:scale-[0.98]';
+const PILL = `${PRIMARY} ${SIZE.md}`;
 
 export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWeekly, onStartCategory, onDismiss, goto }) {
   const streak = currentStreak(st);
@@ -57,7 +58,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           </div>
         </div>
         <div className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-2 text-[15px] font-bold">
-          <Flame size={16} strokeWidth={2.25} className="text-teal" />{streak}
+          <Flame size={16} strokeWidth={2.25} className="text-royal" />{streak}
         </div>
       </div>
 
@@ -82,7 +83,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           <div className="min-w-0 flex-1">
             <h3 className="text-[15px] font-bold">New semester, fresh start</h3>
             <p className="text-[13px] font-medium text-ink/70">Update your goals to rebuild your plan for the new term.</p>
-            <button className="mt-2 text-[13px] font-bold text-periwinkle-strong" onClick={() => goto('account')}>Update goals</button>
+            <button className="mt-2 text-[13px] font-bold text-royal" onClick={() => goto('account')}>Update goals</button>
           </div>
           <button aria-label="Dismiss" onClick={() => onDismiss(semKey)} className="grid size-8 shrink-0 place-items-center rounded-full"><X size={16} strokeWidth={2.25} /></button>
         </section>
@@ -99,18 +100,18 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
       )}
 
       {/* action card */}
-      <section className="rounded-[32px] bg-periwinkle p-5">
+      <section className="rounded-[32px] bg-periwinkle p-5 text-white">
         <div className="flex items-start justify-between">
-          <span className="grid size-12 place-items-center rounded-full bg-surface"><Target size={22} strokeWidth={2} /></span>
+          <span className="grid size-12 place-items-center rounded-full bg-surface text-royal"><Target size={22} strokeWidth={2} /></span>
           <ProgressRing value={shown} max={size} size={58} stroke={5} trackClass="stroke-white" fillClass="stroke-ink">
             <span className="text-[15px] font-bold">{shown}/{size}</span>
           </ProgressRing>
         </div>
         <h2 className="mt-4 text-[22px] font-bold tracking-tight">Today's set</h2>
         <p className="mt-0.5 text-[15px] font-semibold">{plan.finished ? 'Plan complete' : plan.step}</p>
-        <p className="text-sm font-medium text-ink/70">{TRACKS[st.track].label} · {size} questions · {st.minutes} min</p>
+        <p className="text-sm font-medium text-white/90">{TRACKS[st.track].label} · {size} questions · {st.minutes} min</p>
         {plan.daysLeft !== null && (
-          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-[13px] font-bold">
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-[13px] font-bold text-royal">
             <CalendarClock size={14} strokeWidth={2.25} />
             {plan.daysLeft > 1 ? `${plan.daysLeft} days until your interview` : plan.daysLeft === 1 ? '1 day until your interview' : plan.daysLeft === 0 ? 'Interview day' : 'Interview date has passed'}
           </p>
@@ -119,7 +120,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           {done ? (
             <>
               <div className={PILL}><Check size={18} strokeWidth={2.5} />Done for today</div>
-              <button className="inline-flex items-center justify-center rounded-full bg-surface px-6 py-3 text-[15px] font-semibold text-ink active:scale-[0.98]" onClick={onStartExtra}>
+              <button className={`${SECONDARY} ${SIZE.md}`} onClick={onStartExtra}>
                 Practice {size} more
               </button>
             </>
@@ -127,7 +128,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
             <button className={PILL} onClick={onStartDaily}>{answered > 0 ? 'Continue' : 'Start'}</button>
           )}
         </div>
-        {done && <p className="mt-3 text-sm font-medium text-ink/70">Extra practice won't change your streak.</p>}
+        {done && <p className="mt-3 text-sm font-medium text-white/90">Extra practice won't change your streak.</p>}
       </section>
 
       {/* category practice */}
@@ -166,7 +167,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
         </section>
       ) : (
         <section className="flex items-center gap-3 rounded-[28px] bg-surface p-4">
-          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-app"><CircleCheck size={22} strokeWidth={2} className="text-teal" /></span>
+          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-app"><CircleCheck size={22} strokeWidth={2} className="text-royal" /></span>
           <div>
             <h3 className="text-base font-bold">Nothing due today</h3>
             <p className="text-[13px] font-medium leading-snug text-muted-foreground">Miss a question and it comes back here.</p>
@@ -182,7 +183,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
             <h3 className="mt-3 text-lg font-bold leading-snug tracking-tight">{week.topic}</h3>
             {weekAnswered ? (
               <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-                <Check size={16} strokeWidth={2.5} className="text-teal" />Answered. Check Review if you missed it.
+                <Check size={16} strokeWidth={2.5} className="text-royal" />Answered. Check Review if you missed it.
               </p>
             ) : (
               <>
@@ -206,7 +207,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
       <section className="rounded-[28px] bg-surface p-5">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-base font-bold">This week</h3>
-          <button className="text-sm font-semibold text-periwinkle-strong" onClick={() => goto('progress')}>Progress</button>
+          <button className="text-sm font-semibold text-royal" onClick={() => goto('progress')}>Progress</button>
         </div>
         <div className="flex justify-between">
           {days.map((d) => {
@@ -219,7 +220,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
                 <span className={isToday ? 'text-ink' : ''}>{lbl}</span>
                 <div
                   className={cn(
-                    'grid size-9 place-items-center rounded-full border text-white',
+                    'grid size-9 place-items-center rounded-full border text-royal',
                     on ? 'border-teal bg-teal' : d > t ? 'border-dashed border-line bg-app' : 'border-line bg-app',
                     isToday && 'border-2 border-ink',
                   )}

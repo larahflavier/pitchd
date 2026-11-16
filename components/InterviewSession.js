@@ -5,8 +5,9 @@ import Mascot from './Mascot';
 import { cn } from '@/lib/utils';
 import { CAT_LABELS } from '@/lib/engine';
 import { scoreItem } from '@/lib/interview';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
-const PILL = 'inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-4 text-base font-semibold text-white active:scale-[0.98] disabled:opacity-35';
+const PILL = `${PRIMARY} ${SIZE.lg} w-full`;
 const fmt = (s) => `${Math.floor(Math.max(0, s) / 60)}:${String(Math.max(0, s) % 60).padStart(2, '0')}`;
 const RATINGS = [
   { id: 'nailed', label: 'Nailed it' },
@@ -154,7 +155,7 @@ export default function InterviewSession({ title, items, seconds = 0, onFinish, 
                         aria-pressed={on}
                         className={cn('flex w-full items-start gap-3 rounded-2xl border-2 p-3 text-left text-[14px] font-semibold', on ? 'border-teal bg-teal-soft' : 'border-line')}
                       >
-                        <span className={cn('mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2', on ? 'border-teal bg-teal text-white' : 'border-line')}>
+                        <span className={cn('mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2', on ? 'border-royal bg-cyan text-royal' : 'border-line')}>
                           {on && <Check size={13} strokeWidth={3.5} />}
                         </span>
                         {k}

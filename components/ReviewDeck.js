@@ -5,6 +5,7 @@ import Mascot from './Mascot';
 import { cn } from '@/lib/utils';
 import { byId, CAT_LABELS } from '@/lib/engine';
 import { play } from '@/lib/sound';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 const SWIPE = 90; // px to drag before a swipe counts
 
@@ -85,7 +86,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
             {tally.got} of {ids.length} got it.{tally.again > 0 && ` ${tally.again} will come back tomorrow.`}
           </p>
         )}
-        <button className="mt-6 w-full rounded-full bg-ink py-4 text-base font-semibold text-white active:scale-[0.98]" onClick={onClose}>Done</button>
+        <button className={`${PRIMARY} ${SIZE.lg} mt-6 w-full`} onClick={onClose}>Done</button>
       </div>
     );
   }
@@ -172,12 +173,12 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
             <button onClick={() => grade(false)} className="inline-flex items-center justify-center gap-2 rounded-full bg-red-soft py-4 text-base font-semibold text-red active:scale-[0.98]">
               <RotateCcw size={18} strokeWidth={2.25} />Again
             </button>
-            <button onClick={() => grade(true)} className="inline-flex items-center justify-center gap-2 rounded-full bg-ink py-4 text-base font-semibold text-white active:scale-[0.98]">
+            <button onClick={() => grade(true)} className={`${PRIMARY} ${SIZE.lg}`}>
               <Check size={18} strokeWidth={2.5} />Got it
             </button>
           </div>
         ) : (
-          <button onClick={() => setFlipped(true)} className="w-full rounded-full bg-ink py-4 text-base font-semibold text-white active:scale-[0.98]">Show answer</button>
+          <button onClick={() => setFlipped(true)} className={`${PRIMARY} ${SIZE.lg} w-full`}>Show answer</button>
         )}
         {flipped && <p className="mt-2.5 text-center text-[13px] font-medium text-muted-foreground">Swipe right for Got it, left for Again</p>}
       </div>

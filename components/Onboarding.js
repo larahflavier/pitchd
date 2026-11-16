@@ -7,9 +7,10 @@ import { cn } from '@/lib/utils';
 import { TRACKS, TRACK_GROUPS, todayStr } from '@/lib/engine';
 import { buildRoadmap } from '@/lib/curriculum';
 import { SCHOOLS, YEARS, GOALS, INDUSTRIES, TIMELINES, MINUTES, REMIND_TIMES, MAJORS_SOON } from '@/lib/profile';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 const STEPS = ['name', 'school', 'year', 'major', 'goal', 'timeline', 'habit', 'quick', 'plan'];
-const PILL = 'inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-4 text-base font-semibold text-white active:scale-[0.98] disabled:opacity-35';
+const PILL = `${PRIMARY} ${SIZE.lg} w-full`;
 const FIELD = 'w-full rounded-[20px] border-2 border-line bg-surface px-4 py-4 text-base font-semibold outline-none focus:border-ink';
 
 function Option({ selected, onClick, children, sub, disabled }) {
@@ -283,16 +284,16 @@ export default function Onboarding({ initial, initialTrack, onBackToLanding, onS
 
         {id === 'plan' && roadmap && (
           <>
-            <div className="mb-5 rounded-[32px] bg-periwinkle p-5">
+            <div className="mb-5 rounded-[32px] bg-periwinkle p-5 text-white">
               <Mascot mood="happy" size={72} />
               <h1 className="mt-2 text-[24px] font-bold leading-tight tracking-tight">{roadmap.title}</h1>
               {quick && (
-                <p className="mt-1.5 text-sm font-semibold text-ink/70">Starting point: {quick.correct} of {quick.total} on the quick check.</p>
+                <p className="mt-1.5 text-sm font-semibold text-white/90">Starting point: {quick.correct} of {quick.total} on the quick check.</p>
               )}
             </div>
             <ul className="flex flex-col gap-2.5">
               <li className="flex items-center gap-3 rounded-[20px] bg-surface p-4">
-                <CircleCheck size={22} strokeWidth={2} className="shrink-0 text-teal" />
+                <CircleCheck size={22} strokeWidth={2} className="shrink-0 text-royal" />
                 <span className="text-[15px] font-bold">Finish setup</span>
               </li>
               {roadmap.phases.map((p) => (

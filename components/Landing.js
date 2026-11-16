@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Mascot from './Mascot';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
-const PILL = 'inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-4 text-base font-semibold text-white active:scale-[0.98]';
+const PILL = `${PRIMARY} ${SIZE.lg} w-full`;
 
 export default function Landing({ onStart }) {
   const [note, setNote] = useState(false);
@@ -21,7 +22,7 @@ export default function Landing({ onStart }) {
 
       <div className="flex flex-col items-center gap-3 pb-2">
         <button className={PILL} onClick={onStart}>Get started</button>
-        <button className="text-[15px] font-semibold text-periwinkle-strong" onClick={() => setNote(true)}>
+        <button className="text-[15px] font-semibold text-royal" onClick={() => setNote(true)}>
           I already have an account
         </button>
         {note && (

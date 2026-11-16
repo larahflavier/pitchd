@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { TRACKS, CAT_LABELS, todayStr, planProfile } from '@/lib/engine';
 import { describePlan } from '@/lib/curriculum';
 
-const MIX_COLORS = { behavioral: 'bg-teal', basics: 'bg-orange', news: 'bg-pink' };
+const MIX_COLORS = { behavioral: 'bg-cyan', basics: 'bg-orange', news: 'bg-royal' };
 
 // The plan on the Progress tab: where you are, the three phases, and this week's practice mix.
 export default function Roadmap({ st }) {
@@ -16,13 +16,13 @@ export default function Roadmap({ st }) {
 
   return (
     <section className="mb-3.5 flex flex-col gap-3">
-      <div className="rounded-[32px] bg-periwinkle p-5">
-        <p className="text-[13px] font-bold text-ink/70">Your plan</p>
+      <div className="rounded-[32px] bg-periwinkle p-5 text-white">
+        <p className="text-[13px] font-bold text-white/90">Your plan</p>
         <h2 className="mt-1 text-[22px] font-bold leading-tight tracking-tight">{p.label}</h2>
         {!p.finished && <p className="mt-1 text-[15px] font-semibold">This week: {p.theme}</p>}
         {p.finished && <p className="mt-1 text-[15px] font-semibold">Keep practicing, or edit your goals in Account to start a new plan.</p>}
         {p.daysLeft !== null && (
-          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-[13px] font-bold">
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-[13px] font-bold text-royal">
             <CalendarClock size={14} strokeWidth={2.25} />
             {p.daysLeft > 0 ? `${p.daysLeft} days until your interview` : p.daysLeft === 0 ? 'Interview day' : 'Interview date has passed'}
           </p>
@@ -40,7 +40,7 @@ export default function Roadmap({ st }) {
               <Icon
                 size={22}
                 strokeWidth={2}
-                className={cn('mt-0.5 shrink-0', ph.state === 'done' ? 'text-teal' : ph.state === 'current' ? 'text-ink' : 'text-muted-foreground')}
+                className={cn('mt-0.5 shrink-0', ph.state === 'done' ? 'text-royal' : ph.state === 'current' ? 'text-ink' : 'text-muted-foreground')}
               />
               <span>
                 <span className="block text-[15px] font-bold">{ph.name}</span>

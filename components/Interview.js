@@ -9,8 +9,9 @@ import {
   COMPANY_TYPES, MOCK_LENGTHS, THEMES, FREE_MOCKS_PER_WEEK, FREE_STORY_LIMIT, buildDrill, buildMock, secondsPerAnswer,
   sessionEntry, addSession, mocksThisWeek, canStartMock, isPremium,
 } from '@/lib/interview';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
-const PILL = 'inline-flex w-full items-center justify-center rounded-full bg-ink px-6 py-4 text-base font-semibold text-white active:scale-[0.98] disabled:opacity-35';
+const PILL = `${PRIMARY} ${SIZE.lg} w-full`;
 const PREMIUM_TAG = (
   <span className="inline-flex items-center gap-1 rounded-full bg-periwinkle-soft px-2 py-0.5 text-[11px] font-bold">
     <Lock size={11} strokeWidth={2.5} />Premium
@@ -130,11 +131,11 @@ export default function Interview({ st, onUpdate, onImmersive }) {
     <div className="main flex flex-col gap-4">
       <h1 className="text-[22px] font-bold tracking-tight">Interview</h1>
 
-      <section className="rounded-[32px] bg-periwinkle p-5">
-        <span className="grid size-12 place-items-center rounded-full bg-surface"><Zap size={22} strokeWidth={2} /></span>
+      <section className="rounded-[32px] bg-periwinkle p-5 text-white">
+        <span className="grid size-12 place-items-center rounded-full bg-surface text-royal"><Zap size={22} strokeWidth={2} /></span>
         <h2 className="mt-4 text-[22px] font-bold tracking-tight">Quick drill</h2>
-        <p className="mt-0.5 text-sm font-medium text-ink/70">3 questions. Type your answer, then compare it to the model answer.</p>
-        <button className="mt-4 inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-[15px] font-semibold text-white active:scale-[0.98]" onClick={startDrill}>Start</button>
+        <p className="mt-0.5 text-sm font-medium text-white/90">3 questions. Type your answer, then compare it to the model answer.</p>
+        <button className={`${PRIMARY} ${SIZE.md} mt-4`} onClick={startDrill}>Start</button>
       </section>
 
       <section className="rounded-[28px] bg-surface p-5">

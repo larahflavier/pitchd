@@ -7,9 +7,10 @@ import {
   THEMES, themeById, STORY_CHECKS, STORY_TARGET, FREE_STORY_LIMIT, emptyStory, storyTags,
   canAddStory, isPremium, upsertStory, deleteStory,
 } from '@/lib/interview';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 const FIELD = 'w-full rounded-[20px] border-2 border-line bg-surface p-4 text-[15px] font-medium outline-none focus:border-ink';
-const PILL = 'inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-4 text-base font-semibold text-white active:scale-[0.98] disabled:opacity-35';
+const PILL = `${PRIMARY} ${SIZE.lg} w-full`;
 const PARTS = [
   ['situation', 'Situation', 'Where and when? What was happening?'],
   ['task', 'Task', 'What was your goal or responsibility?'],
@@ -87,7 +88,7 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing }) {
                 <li key={c}>
                   <button onClick={() => toggleCheck(c)} aria-pressed={on}
                     className={cn('flex w-full items-start gap-3 rounded-2xl border-2 p-3 text-left text-[14px] font-semibold', on ? 'border-teal bg-teal-soft' : 'border-line')}>
-                    <span className={cn('mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2', on ? 'border-teal bg-teal text-white' : 'border-line')}>
+                    <span className={cn('mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2', on ? 'border-royal bg-cyan text-royal' : 'border-line')}>
                       {on && <Check size={13} strokeWidth={3.5} />}
                     </span>
                     {c}

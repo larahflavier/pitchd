@@ -5,6 +5,7 @@ import { Lock, ChevronRight, Download, Trash2, Copy, Check } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { TRACKS, statsText, todayStr } from '@/lib/engine';
 import { SCHOOLS, YEARS, GOALS, INDUSTRIES, TIMELINES, MINUTES } from '@/lib/profile';
+import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 const FIELD = 'w-full rounded-2xl border-2 border-line bg-surface px-4 py-3 text-[15px] font-semibold outline-none focus:border-ink';
 const PREMIUM_TAG = (
@@ -166,7 +167,7 @@ export default function Account({ st, onPatch, onSaveGoals, onReset }) {
         <button
           disabled={!changed || !goalsOk}
           onClick={saveGoals}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-[15px] font-semibold text-white active:scale-[0.98] disabled:opacity-35"
+          className={`${PRIMARY} ${SIZE.md} w-full`}
         >
           {saved ? <><Check size={17} strokeWidth={2.5} />Plan rebuilt</> : 'Save and rebuild my plan'}
         </button>
@@ -204,10 +205,10 @@ export default function Account({ st, onPatch, onSaveGoals, onReset }) {
       </Link>
 
       <Section title="Your data" hint="Everything is saved on this device only.">
-        <button onClick={download} className="inline-flex items-center justify-center gap-2 rounded-full border border-line px-5 py-3 text-[15px] font-semibold active:scale-[0.98]">
+        <button onClick={download} className={`${SECONDARY} ${SIZE.md}`}>
           <Download size={17} strokeWidth={2.25} />Download my data
         </button>
-        <button onClick={copyStats} className="inline-flex items-center justify-center gap-2 rounded-full border border-line px-5 py-3 text-[15px] font-semibold active:scale-[0.98]">
+        <button onClick={copyStats} className={`${SECONDARY} ${SIZE.md}`}>
           {copied ? <><Check size={17} strokeWidth={2.5} />Copied</> : <><Copy size={17} strokeWidth={2.25} />Copy my stats</>}
         </button>
         <button

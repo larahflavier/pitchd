@@ -121,7 +121,7 @@ export default function Review({ st, onOpenDeck }) {
                   <span className="text-muted-foreground">{v ? `${v.pct}%` : '--'}</span>
                 </div>
                 <div className="h-2.5 overflow-hidden rounded-full bg-line">
-                  <i className="block h-full rounded-full bg-teal" style={{ width: `${v?.pct ?? 0}%` }} />
+                  <i className="block h-full rounded-full bg-azure" style={{ width: `${v?.pct ?? 0}%` }} />
                 </div>
               </div>
             );
