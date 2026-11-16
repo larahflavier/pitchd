@@ -129,7 +129,7 @@
   @media (min-width: 500px) {
     .app {
       margin: 24px auto; min-height: calc(100dvh - 48px); border-radius: 40px;
-      border: 1px solid var(--line);
+      border: 1px solid var(--line); overflow: clip;
     }
   }
   .main { flex: 1; }

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Quiz from '@/components/Quiz';
 import TabBar from '@/components/TabBar';
-import { motion, MotionConfig } from 'motion/react';
+import { motion, MotionConfig, AnimatePresence } from 'motion/react';
 import { Home, Progress } from '@/components/Screens';
 import Summary from '@/components/Summary';
 import Celebrations from '@/components/Celebrations';
@@ -16,7 +16,7 @@ import SoundToggle from '@/components/SoundToggle';
 import { setSoundEnabled } from '@/lib/sound';
 import { storyCards } from '@/lib/interview';
 import ReviewDeck from '@/components/ReviewDeck';
-import Landing from '@/components/Landing';
+import Splash from '@/components/Splash';
 import Onboarding from '@/components/Onboarding';
 import {
   TRACKS, loadState, refreshPlan, updateProfile, applyGoals, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
@@ -32,7 +32,7 @@ export default function Page() {
   const [deck, setDeck] = useState(null); // { title, ids, items? }: a flip-card review session
   const [events, setEvents] = useState([]); // level-ups and badges waiting for a calm screen
   const [immersive, setImmersive] = useState(false); // hides the tab bar during an interview session
-  const [started, setStarted] = useState(false); // past the landing page
+  const [splash, setSplash] = useState(null); // 'full' for new users, 'short' for returning users, once per session
 
   useEffect(() => {
     let s = refreshPlan(loadState());
@@ -42,6 +42,16 @@ export default function Page() {
     saveState(s);
     const p = new URLSearchParams(window.location.search).get('track');
     if (p && TRACKS[p]) setUrlTrack(p);
+    // splash: new users always see the full one. Returning users see a short one once per browser session.
+    // If storage is blocked we can't remember, so they see the short one on every open.
+    let mode = s.onboarded ? 'short' : 'full';
+    if (s.onboarded) {
+      try {
+        if (sessionStorage.getItem('pitchd:splash') === '1') mode = null;
+        else sessionStorage.setItem('pitchd:splash', '1');
+      } catch {}
+    }
+    setSplash(mode);
   }, []);
 
   // keep the audio module in step with the saved setting (Account and the header both write it)
@@ -131,11 +141,13 @@ export default function Page() {
   /* ---- render ---- */
   let body;
   if (!st.onboarded || !TRACKS[st.track]) {
-    body = started ? (
+    body = (
       <Onboarding
         initial={st}
         initialTrack={urlTrack}
-        onBackToLanding={() => setStarted(false)}
+        ready={!splash}
+        soundOn={st.sound !== false}
+        onSound={(sound) => persist({ ...ref.current, sound })}
         // save the profile so far, then pick the quick-check questions from the chosen track
         onStartQuick={(profile) => {
           persist({ ...ref.current, ...profile });
@@ -148,8 +160,6 @@ export default function Page() {
           startDaily();
         }}
       />
-    ) : (
-      <Landing onStart={() => setStarted(true)} />
     );
   } else if (deck) {
     body = (
@@ -201,7 +211,7 @@ export default function Page() {
         st={st}
         onPatch={(patch) => persist(updateProfile(ref.current, patch))}
         onSaveGoals={(patch) => persist(applyGoals(ref.current, patch))}
-        onReset={() => { persist(resetState()); setEvents([]); setStarted(false); setTab('home'); }}
+        onReset={() => { persist(resetState()); setEvents([]); setTab('home'); }}
       />
     );
   } else {
@@ -216,14 +226,16 @@ export default function Page() {
   const idle = st.onboarded && !quizActive && !deck && !immersive;
   // a new key fades the next screen in; answering inside a quiz never changes it
   const screenKey = !st.onboarded || !TRACKS[st.track]
-    ? (started ? 'onboarding' : 'landing')
+    ? 'onboarding'
     : deck ? 'deck' : session ? (session.done ? 'summary' : 'quiz') : tab;
   return (
     <MotionConfig reducedMotion="user">
       <div className="app">
-        <div className="-mb-1 flex justify-end">
-          <SoundToggle on={st.sound !== false} onChange={(sound) => persist({ ...ref.current, sound })} />
-        </div>
+        {st.onboarded && (
+          <div className="-mb-1 flex justify-end">
+            <SoundToggle on={st.sound !== false} onChange={(sound) => persist({ ...ref.current, sound })} />
+          </div>
+        )}
         <motion.div
           key={screenKey}
           className="flex flex-1 flex-col"
@@ -235,6 +247,17 @@ export default function Page() {
         </motion.div>
         {showTabs && <TabBar tab={tab} onChange={setTab} reviewDue={dueNow} />}
         <Celebrations events={events} idle={idle} onNext={() => setEvents((e) => e.slice(1))} />
+        <AnimatePresence>
+          {splash && (
+            <Splash
+              key="splash"
+              mode={splash}
+              soundOn={st.sound !== false}
+              onSound={(sound) => persist({ ...ref.current, sound })}
+              onDone={() => setSplash(null)}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </MotionConfig>
   );
