@@ -20,7 +20,7 @@ function usePrefersReducedMotion() {
 }
 
 // One card at a time. Tap to flip. After flipping: swipe right (or "Got it") or swipe left (or "Again").
-export default function ReviewDeck({ title, ids, saved = [], onToggleSave, onGrade, onClose }) {
+export default function ReviewDeck({ title, ids, items = null, saved = [], onToggleSave, onGrade, onClose }) {
   const [i, setI] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [dx, setDx] = useState(0);
@@ -29,7 +29,7 @@ export default function ReviewDeck({ title, ids, saved = [], onToggleSave, onGra
   const drag = useRef(null);
   const reduced = usePrefersReducedMotion();
   const done = i >= ids.length;
-  const q = done ? null : byId[ids[i]];
+  const q = done ? null : items ? items.find((x) => x.id === ids[i]) : byId[ids[i]];
 
   const grade = (got) => {
     if (leaving || !flipped || !q) return;
@@ -152,7 +152,7 @@ export default function ReviewDeck({ title, ids, saved = [], onToggleSave, onGra
           {/* back */}
           <div className={cn('absolute inset-0 flex flex-col overflow-auto rounded-[32px] border-2 bg-surface p-6 [transform:rotateY(180deg)] [-webkit-backface-visibility:hidden] [backface-visibility:hidden]', tint)}>
             <span className="self-start rounded-full bg-teal-soft px-3 py-1 text-xs font-bold">Answer</span>
-            <p className="mt-3 text-[19px] font-bold leading-snug tracking-tight">{q.a}</p>
+            <p className="mt-3 whitespace-pre-line text-[19px] font-bold leading-snug tracking-tight">{q.a}</p>
             {q.e && <p className="mt-3 text-[15px] font-medium leading-relaxed text-muted-foreground">{q.e}</p>}
             {Array.isArray(q.keyPoints) && q.keyPoints.length > 0 && (
               <ul className="mt-3 list-disc pl-5 text-[14px] font-medium text-muted-foreground">

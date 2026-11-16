@@ -35,6 +35,7 @@ export default function Review({ st, onOpenDeck }) {
   const due = deckIds(st, 'due').length;
   const missed = deckIds(st, 'missed').length;
   const saved = deckIds(st, 'saved').length;
+  const stories = st.interview.stories.length;
   const mastered = fixedCount(st);
   const inReview = loopCards(st).length;
   const days = forecast(st, 7);
@@ -63,7 +64,7 @@ export default function Review({ st, onOpenDeck }) {
         <DeckRow Icon={RotateCcw} tone="bg-orange-soft" title="Due today" sub={due ? 'Flip through what is ready' : 'Nothing due right now'} count={due} disabled={!due} onClick={() => onOpenDeck('due')} />
         <DeckRow Icon={XCircle} tone="bg-red-soft" title="Missed" sub="Everything you got wrong, still in review" count={missed} disabled={!missed} onClick={() => onOpenDeck('missed')} />
         <DeckRow Icon={Bookmark} tone="bg-periwinkle-soft" title="Saved" sub="Questions you bookmarked" count={saved} disabled={!saved} onClick={() => onOpenDeck('saved')} />
-        <DeckRow Icon={NotebookPen} title="My stories" sub="Your STAR stories, once you write them in Interview" count={0} disabled />
+        <DeckRow Icon={NotebookPen} title="My stories" sub={stories ? 'Practice telling your STAR stories' : 'Write STAR stories in Interview'} count={stories} disabled={!stories} onClick={() => onOpenDeck('stories')} />
       </section>
 
       {/* premium category decks */}

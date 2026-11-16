@@ -5,6 +5,8 @@ import TabBar from '@/components/TabBar';
 import Placeholder from '@/components/Placeholder';
 import { Home, Summary, Progress } from '@/components/Screens';
 import Review from '@/components/Review';
+import Interview from '@/components/Interview';
+import { storyCards } from '@/lib/interview';
 import ReviewDeck from '@/components/ReviewDeck';
 import Landing from '@/components/Landing';
 import Onboarding from '@/components/Onboarding';
@@ -19,7 +21,8 @@ export default function Page() {
   const [tab, setTab] = useState('home');
   const [session, setSession] = useState(null); // { kind, ids, reviewIds, results? }
   const [urlTrack, setUrlTrack] = useState(null);
-  const [deck, setDeck] = useState(null); // { title, ids }: a flip-card review session
+  const [deck, setDeck] = useState(null); // { title, ids, items? }: a flip-card review session
+  const [immersive, setImmersive] = useState(false); // hides the tab bar during an interview session
   const [started, setStarted] = useState(false); // past the landing page
 
   useEffect(() => {
@@ -59,8 +62,13 @@ export default function Page() {
     const ids = buildSet(ref.current, { extra: true });
     setSession({ kind: 'extra', ids, reviewIds: dueIds(ref.current) });
   };
-  const DECK_TITLES = { due: 'Due today', missed: 'Missed', saved: 'Saved' };
+  const DECK_TITLES = { due: 'Due today', missed: 'Missed', saved: 'Saved', stories: 'My stories' };
   const startDeck = (kind) => {
+    if (kind === 'stories') {
+      const items = storyCards(ref.current);
+      if (items.length) setDeck({ title: DECK_TITLES.stories, ids: items.map((x) => x.id), items });
+      return;
+    }
     const ids = deckIds(ref.current, kind);
     if (ids.length) setDeck({ title: DECK_TITLES[kind], ids });
   };
@@ -114,9 +122,11 @@ export default function Page() {
       <ReviewDeck
         title={deck.title}
         ids={deck.ids}
+        items={deck.items}
         saved={st.saved}
-        onToggleSave={(qid) => persist(toggleSaved(ref.current, qid))}
-        onGrade={(qid, got) => persist(recordAnswer(ref.current, qid, got))}
+        onToggleSave={deck.items ? undefined : (qid) => persist(toggleSaved(ref.current, qid))}
+        // story cards are practice only: they don't touch the review schedule
+        onGrade={(qid, got) => { if (!deck.items) persist(recordAnswer(ref.current, qid, got)); }}
         onClose={() => setDeck(null)}
       />
     );
@@ -146,7 +156,7 @@ export default function Page() {
   } else if (tab === 'home') {
     body = <Home st={st} onStartDaily={startDaily} onStartExtra={startExtra} onStartReview={startReview} onStartWeekly={startWeekly} onStartCategory={startCategory} goto={setTab} />;
   } else if (tab === 'interview') {
-    body = <Placeholder title="Interview" text="Mock interviews and the story builder are coming soon." />;
+    body = <Interview st={st} onUpdate={(fn) => persist(fn(ref.current))} onImmersive={setImmersive} />;
   } else if (tab === 'review') {
     body = <Review st={st} onOpenDeck={startDeck} />;
   } else if (tab === 'account') {
@@ -162,7 +172,7 @@ export default function Page() {
     );
   }
 
-  const showTabs = st.onboarded && st.track && !session && !deck;
+  const showTabs = st.onboarded && st.track && !session && !deck && !immersive;
   return (
     <div className="app">
       {body}
