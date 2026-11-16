@@ -1,14 +1,14 @@
 'use client';
 import {
   Flame, Check, Target, RotateCcw, CircleCheck, Newspaper, MessagesSquare, BookOpen,
-  Calculator, Megaphone, Truck, Users, CalendarClock, Snowflake, Sparkles, X,
+  Calculator, Megaphone, Truck, Users, CalendarClock, Snowflake, Sparkles, X, Landmark, Cog, Cpu, Factory, Wrench,
 } from 'lucide-react';
 import Mascot from './Mascot';
 import ProgressRing from './ui/ProgressRing';
 import { cn } from '@/lib/utils';
 import {
   TRACKS, CAT_LABELS, byId, currentStreak, dueIds, dailyDone, currentWeekly,
-  planProfile, mastery, lastNDays, weekDays, todayStr, setSize, CATEGORY_SET_SIZE, SHARED,
+  planProfile, mastery, lastNDays, weekDays, todayStr, setSize, CATEGORY_SET_SIZE, quizCatsFor,
 } from '@/lib/engine';
 import Roadmap from './Roadmap';
 import SkillMap from './SkillMap';
@@ -20,8 +20,9 @@ import { levelProgress, freezesLeft } from '@/lib/gamify';
 const CAT_ICONS = {
   behavioral: MessagesSquare, basics: BookOpen, news: Newspaper,
   accounting: Calculator, marketing: Megaphone, supplychain: Truck, management: Users,
+  finance: Landmark, mechanical: Cog, electrical: Cpu, industrial: Factory, engfund: Wrench,
 };
-const CHIP_LABELS = { ...CAT_LABELS, basics: 'Basics' };
+const CHIP_LABELS = { ...CAT_LABELS, basics: 'Basics', engfund: 'Fundamentals', electrical: 'Electrical', industrial: 'Industrial' };
 const PILL = 'inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-[15px] font-semibold text-white active:scale-[0.98]';
 
 export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWeekly, onStartCategory, onDismiss, goto }) {
@@ -35,7 +36,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
   const answered = st.today?.date === t ? Object.keys(st.today.answers || {}).length : 0;
   const size = st.today?.date === t ? st.today.ids.length : setSize(st);
   const shown = done ? size : Math.min(answered, size);
-  const cats = [...SHARED, st.track];
+  const cats = quizCatsFor(st.track);
   // fresh starts: a new theme every Monday, and a nudge to refresh goals in the first weeks of January and August
   const now = new Date();
   const dismissed = st.dismissed || [];
@@ -138,7 +139,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
         <div className="-mx-[18px] overflow-x-auto px-[18px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex gap-2">
             {cats.map((c) => {
-              const Icon = CAT_ICONS[c];
+              const Icon = CAT_ICONS[c] || BookOpen;
               return (
                 <button
                   key={c}
@@ -237,7 +238,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
 /* -------------------------------- Progress ------------------------------- */
 export function Progress({ st }) {
   const m = mastery(st);
-  const cats = ['behavioral', 'basics', 'news', st.track];
+  const cats = quizCatsFor(st.track);
   const days = lastNDays(21);
   return (
     <div className="main">

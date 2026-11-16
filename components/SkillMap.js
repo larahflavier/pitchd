@@ -1,30 +1,29 @@
 'use client';
-import { MessagesSquare, BookOpen, Newspaper, Calculator, Megaphone, Truck, Users } from 'lucide-react';
-import { byId, CAT_LABELS, SHARED } from '@/lib/engine';
+import { MessagesSquare, BookOpen, Newspaper, Calculator, Megaphone, Truck, Users, Landmark, Cog, Cpu, Factory, Wrench } from 'lucide-react';
+import { byId, CAT_LABELS, quizCatsFor, questionsFor } from '@/lib/engine';
 
 const ICONS = {
   behavioral: MessagesSquare, basics: BookOpen, news: Newspaper,
   accounting: Calculator, marketing: Megaphone, supplychain: Truck, management: Users,
+  finance: Landmark, mechanical: Cog, electrical: Cpu, industrial: Factory, engfund: Wrench,
 };
 
 // Topic tiles that fill in as cards are mastered. A card is mastered after its 30-day review.
 // A topic is a category for now.
 export default function SkillMap({ st }) {
-  const total = {};
-  for (const q of Object.values(byId)) if (!q.weekly) total[q.cat] = (total[q.cat] || 0) + 1;
   const mastered = {};
   for (const [id, c] of Object.entries(st.cards)) {
     if (c.fixed && byId[id]) mastered[byId[id].cat] = (mastered[byId[id].cat] || 0) + 1;
   }
-  const cats = [...SHARED, st.track];
+  const cats = quizCatsFor(st.track);
   return (
     <section className="mb-3.5">
       <h2 className="mb-2.5 text-base font-bold">Skill map</h2>
       <ul className="grid grid-cols-2 gap-2.5">
         {cats.map((c) => {
-          const Icon = ICONS[c];
+          const Icon = ICONS[c] || BookOpen;
           const n = mastered[c] || 0;
-          const t = total[c] || 1;
+          const t = questionsFor(c, st.track).length || 1;
           const pct = Math.round((n / t) * 100);
           return (
             <li key={c} className="relative overflow-hidden rounded-[24px] bg-surface p-4">

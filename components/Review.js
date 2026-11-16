@@ -1,7 +1,7 @@
 'use client';
 import { RotateCcw, XCircle, Bookmark, NotebookPen, LayoutGrid, ChevronRight, Lock, Trophy, CalendarDays } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { CAT_LABELS, SHARED, deckIds, forecast, fixedCount, loopCards, mastery, answeredByCat } from '@/lib/engine';
+import { CAT_LABELS, quizCatsFor, deckIds, forecast, fixedCount, loopCards, mastery, answeredByCat } from '@/lib/engine';
 
 function DeckRow({ Icon, title, sub, count, onClick, disabled, premium, tone = 'bg-app' }) {
   return (
@@ -42,7 +42,7 @@ export default function Review({ st, onOpenDeck }) {
   const tomorrow = days[0].count;
   const maxDay = Math.max(1, ...days.map((d) => d.count));
   const m = mastery(st);
-  const cats = [...SHARED, st.track];
+  const cats = quizCatsFor(st.track);
   const seen = answeredByCat(st);
 
   return (

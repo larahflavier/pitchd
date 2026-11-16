@@ -4,7 +4,7 @@ import { ChevronLeft, Check, CircleCheck, Circle } from 'lucide-react';
 import Mascot from './Mascot';
 import Quiz from './Quiz';
 import { cn } from '@/lib/utils';
-import { TRACKS, todayStr } from '@/lib/engine';
+import { TRACKS, TRACK_GROUPS, todayStr } from '@/lib/engine';
 import { buildRoadmap } from '@/lib/curriculum';
 import { SCHOOLS, YEARS, GOALS, INDUSTRIES, TIMELINES, MINUTES, REMIND_TIMES, MAJORS_SOON } from '@/lib/profile';
 
@@ -190,12 +190,17 @@ export default function Onboarding({ initial, initialTrack, onBackToLanding, onS
         {id === 'major' && (
           <>
             <Title sub="This sets your track. You can change it later.">What's your major?</Title>
-            <div className="flex flex-col gap-2.5">
-              {Object.entries(TRACKS).map(([tid, t]) => (
-                <Option key={tid} selected={d.track === tid} onClick={() => set({ track: tid })} sub={t.blurb}>{t.label}</Option>
-              ))}
-            </div>
-            <p className="mb-2 mt-5 text-[13px] font-semibold text-muted-foreground">Coming soon</p>
+            {Object.entries(TRACK_GROUPS).map(([gid, glabel]) => (
+              <div key={gid} className="mb-4">
+                <p className="mb-2 text-[13px] font-bold text-muted-foreground">{glabel}</p>
+                <div className="flex flex-col gap-2.5">
+                  {Object.entries(TRACKS).filter(([, t]) => t.group === gid).map(([tid, t]) => (
+                    <Option key={tid} selected={d.track === tid} onClick={() => set({ track: tid })} sub={t.blurb}>{t.label}</Option>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <p className="mb-2 mt-2 text-[13px] font-semibold text-muted-foreground">Coming soon</p>
             <div className="flex flex-wrap gap-2">
               {MAJORS_SOON.map((m) => (
                 <span key={m} className="rounded-full border border-line px-3 py-1.5 text-[13px] font-semibold text-muted-foreground">{m}</span>
