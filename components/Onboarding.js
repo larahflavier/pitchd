@@ -81,9 +81,8 @@ function Chip({ selected, onClick, children }) {
   );
 }
 
-export default function Onboarding({ initial, initialTrack, ready = true, soundOn, onSound, onStartQuick, onAnswer, onDone }) {
+export default function Onboarding({ initial, initialTrack, ready = true, onOpenWip, soundOn, onSound, onStartQuick, onAnswer, onDone }) {
   const [step, setStep] = useState(0);
-  const [note, setNote] = useState(false); // "accounts are coming soon" on the welcome screen
   const [d, setD] = useState({
     name: initial.name || '',
     school: initial.school || '',
@@ -208,8 +207,7 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
               </div>
               <button className={`${PILL} relative`} onClick={() => setStep(1)}>Get started</button>
               <div className="mt-4 flex flex-col items-center gap-2.5 text-[15px] font-semibold">
-                <button className="underline underline-offset-4" onClick={() => setNote(true)}>I already have an account</button>
-                {note && <p className="text-center text-sm font-medium text-white/90">Accounts are coming soon. For now your progress is saved on this device.</p>}
+                <button className="underline underline-offset-4" onClick={() => onOpenWip?.('accounts')}>I already have an account</button>
                 <Link href="/about" className="text-white/90 underline underline-offset-4">Why it works</Link>
               </div>
             </div>

@@ -36,7 +36,7 @@ const when = (d) => {
   return new Date(y, m - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
-export default function Interview({ st, onUpdate, onImmersive }) {
+export default function Interview({ st, onUpdate, onImmersive, onOpenWip }) {
   const [view, setView] = useState('hub'); // hub | mock-setup | run | stories
   const [run, setRun] = useState(null);
   const [storyEditing, setStoryEditing] = useState(false);
@@ -67,6 +67,7 @@ export default function Interview({ st, onUpdate, onImmersive }) {
         title={run.title}
         items={run.items}
         seconds={run.seconds}
+        onOpenWip={onOpenWip}
         onExit={() => { setView('hub'); setRun(null); }}
         onFinish={(marks) => {
           const entry = sessionEntry({ ...run, marks, date: today });
@@ -78,7 +79,7 @@ export default function Interview({ st, onUpdate, onImmersive }) {
   }
 
   if (view === 'stories') {
-    return <StoryBuilder st={st} onUpdate={onUpdate} onBack={() => setView('hub')} onEditing={setStoryEditing} />;
+    return <StoryBuilder st={st} onUpdate={onUpdate} onBack={() => setView('hub')} onEditing={setStoryEditing} onOpenWip={onOpenWip} />;
   }
 
   if (view === 'mock-setup') {
@@ -99,9 +100,9 @@ export default function Interview({ st, onUpdate, onImmersive }) {
             {Object.entries(TRACKS).map(([id, t]) => id === st.track ? (
               <Chip key={id} on onClick={() => {}}>{t.label}</Chip>
             ) : (
-              <span key={id} className="inline-flex items-center gap-1.5 rounded-full border-2 border-line px-4 py-2.5 text-sm font-semibold text-muted-foreground opacity-70">
+              <button key={id} onClick={() => onOpenWip('premium')} className="inline-flex items-center gap-1.5 rounded-full border-2 border-line px-4 py-2.5 text-sm font-semibold text-muted-foreground">
                 <Lock size={13} strokeWidth={2.25} />{t.label}
-              </span>
+              </button>
             ))}
           </div>
           <p className="mt-2 flex items-center gap-2 text-[13px] font-medium text-muted-foreground">Other tracks {PREMIUM_TAG}</p>
@@ -168,9 +169,9 @@ export default function Interview({ st, onUpdate, onImmersive }) {
               <button className={`${PRIMARY} ${SIZE.md} mt-4`} onClick={() => setView('mock-setup')}>Set up</button>
             ) : (
               <>
-                <button className={`${PRIMARY} ${SIZE.md} mt-4`} disabled><Lock size={15} strokeWidth={2.5} />Set up</button>
+                <button className={`${PRIMARY} ${SIZE.md} mt-4`} onClick={() => onOpenWip('premium')}><Lock size={15} strokeWidth={2.5} />See what's coming</button>
                 <p className="mt-2 text-[13px] font-medium text-white/85">
-                  You used your {FREE_MOCKS_PER_WEEK} free mock this week ({used}). The next one unlocks Monday. Unlimited mocks are Premium.
+                  You used your {FREE_MOCKS_PER_WEEK} free mock this week ({used}). The next one unlocks Monday. Unlimited mocks are part of Premium, which isn't built yet.
                 </p>
               </>
             )}

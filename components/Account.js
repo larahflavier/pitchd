@@ -51,7 +51,7 @@ const goalsOf = (st) => ({
   tlKind: st.timeline.kind === 'unsure' ? 'unsure' : st.timeline.kind, tlDate: st.timeline.date || '',
 });
 
-export default function Account({ st, onPatch, onSaveGoals, onReset }) {
+export default function Account({ st, onPatch, onSaveGoals, onReset, onOpenWip }) {
   const [g, setG] = useState(() => goalsOf(st));
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -130,10 +130,10 @@ export default function Account({ st, onPatch, onSaveGoals, onReset }) {
             <Chip key={id} on={st.track === id} onClick={() => st.track !== id && onPatch({ track: id })}>{t.label}</Chip>
           ))}
         </div>
-        <div className="flex items-center justify-between rounded-2xl border border-dashed border-line px-4 py-3 text-[14px] font-semibold text-muted-foreground">
+        <button onClick={() => onOpenWip('premium')} className="flex items-center justify-between rounded-2xl border border-dashed border-line px-4 py-3 text-left text-[14px] font-semibold text-muted-foreground">
           <span className="flex items-center gap-2"><Lock size={14} strokeWidth={2.25} />Add a second track</span>
           {PREMIUM_TAG}
-        </div>
+        </button>
       </Section>
 
       <Section title="Goals and timeline" hint="Saving restarts your plan from today.">
@@ -198,6 +198,14 @@ export default function Account({ st, onPatch, onSaveGoals, onReset }) {
           <span className="rounded-full bg-teal-soft px-3 py-1 text-[13px] font-bold">{st.tier === 'premium' ? 'Premium' : 'Free'}</span>
         </div>
       </Section>
+
+      <button onClick={() => onOpenWip()} className="flex items-center justify-between rounded-[28px] bg-royal p-5 text-left text-base font-bold text-white">
+        <span>
+          What's coming
+          <span className="block text-[13px] font-medium text-white/85">Accounts, Premium, AI feedback, and more</span>
+        </span>
+        <ChevronRight size={18} strokeWidth={2.25} />
+      </button>
 
       <Link href="/about" className="flex items-center justify-between rounded-[28px] bg-surface p-5 text-base font-bold active:scale-[0.99]">
         About Pitchd

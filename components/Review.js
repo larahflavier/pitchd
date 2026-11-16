@@ -31,7 +31,7 @@ const dueLabel = (d, t) => {
   return diff === 1 ? 'Tomorrow' : `In ${diff} days`;
 };
 
-export default function Review({ st, onOpenDeck }) {
+export default function Review({ st, onOpenDeck, onOpenWip }) {
   const t = todayStr();
   const [cat, setCat] = useState('all'); // category filter for the Missed list
   const due = deckIds(st, 'due').length;
@@ -148,7 +148,7 @@ export default function Review({ st, onOpenDeck }) {
       </section>
 
       {/* premium category decks */}
-      <section className="rounded-[28px] bg-surface p-5">
+      <button onClick={() => onOpenWip('premium')} className="block w-full rounded-[28px] bg-surface p-5 text-left">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 text-base font-bold"><LayoutGrid size={18} strokeWidth={2} />By category</h2>
           <span className="inline-flex items-center gap-1 rounded-full bg-azure-soft px-2.5 py-1 text-[11px] font-bold text-royal">
@@ -163,7 +163,7 @@ export default function Review({ st, onOpenDeck }) {
             </li>
           ))}
         </ul>
-      </section>
+      </button>
 
       {/* forecast */}
       <section className="rounded-[28px] bg-surface p-5">

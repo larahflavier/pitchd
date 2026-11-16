@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Plus, Lock, Check, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import WipSheet from './ui/WipSheet';
 import { todayStr } from '@/lib/engine';
 import {
   THEMES, themeById, STORY_CHECKS, STORY_TARGET, FREE_STORY_LIMIT, emptyStory, storyTags,
@@ -18,8 +19,9 @@ const PARTS = [
   ['result', 'Result', 'What happened? Add a number if you can.'],
 ];
 
-export default function StoryBuilder({ st, onUpdate, onBack, onEditing }) {
+export default function StoryBuilder({ st, onUpdate, onBack, onEditing, onOpenWip }) {
   const [draft, setDraft] = useState(null);
+  const [wipOpen, setWipOpen] = useState(false); // the "work in progress" popup inside the editor
   const stories = st.interview.stories;
   const premium = isPremium(st);
   const canAdd = canAddStory(st);
@@ -97,11 +99,14 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing }) {
               );
             })}
           </ul>
-          <div className="mt-3 flex items-center gap-2 rounded-2xl bg-periwinkle-soft p-3 text-[13px] font-semibold">
+          <button
+            onClick={() => setWipOpen(true)}
+            className="mt-3 flex w-full items-center gap-2 rounded-2xl bg-azure-soft p-3 text-left text-[13px] font-semibold text-royal"
+          >
             <Lock size={14} strokeWidth={2.25} className="shrink-0" />
             <span className="flex-1">AI feedback on this story</span>
-            <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-bold">Premium</span>
-          </div>
+            <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-bold">Not built yet</span>
+          </button>
         </section>
 
         <button className={PILL} disabled={empty} onClick={save}>Save story</button>
@@ -113,6 +118,11 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing }) {
             <Trash2 size={16} strokeWidth={2.25} />Delete story
           </button>
         )}
+        <WipSheet
+          open={wipOpen}
+          text="AI feedback isn't built yet. Your story and everything you've typed are safe. Check back later!"
+          onClose={() => setWipOpen(false)}
+        />
       </div>
     );
   }
@@ -163,12 +173,17 @@ export default function StoryBuilder({ st, onUpdate, onBack, onEditing }) {
           <Plus size={18} strokeWidth={2.5} />New story
         </button>
       ) : (
-        <div className="flex items-center gap-3 rounded-[24px] bg-periwinkle-soft p-4">
+        <button onClick={() => onOpenWip('premium')} className="flex items-center gap-3 rounded-[24px] bg-azure-soft p-4 text-left text-royal">
           <Lock size={18} strokeWidth={2.25} className="shrink-0" />
-          <span className="flex-1 text-[14px] font-semibold">You've used your {FREE_STORY_LIMIT} free stories. Unlimited stories are a Premium feature.</span>
+          <span className="flex-1 text-[14px] font-semibold">You've used your {FREE_STORY_LIMIT} free stories. Unlimited stories are part of Premium, which isn't built yet.</span>
           <span className="rounded-full bg-surface px-2.5 py-1 text-[11px] font-bold">Premium</span>
-        </div>
+        </button>
       )}
+      <button onClick={() => onOpenWip('ai')} className="flex items-center gap-3 rounded-[24px] border-2 border-dashed border-line p-4 text-left text-muted-foreground">
+        <Lock size={16} strokeWidth={2.25} className="shrink-0" />
+        <span className="flex-1 text-[14px] font-semibold">AI feedback on your stories</span>
+        <span className="rounded-full bg-azure-soft px-2.5 py-1 text-[11px] font-bold text-royal">Not built yet</span>
+      </button>
       <p className="text-center text-[13px] font-medium text-muted-foreground">
         {premium ? `${stories.length} of ${STORY_TARGET} suggested stories` : `${stories.length} of ${FREE_STORY_LIMIT} free stories`}
       </p>

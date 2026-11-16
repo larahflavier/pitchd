@@ -24,7 +24,7 @@ Specs: `docs/PRODUCT_PLAN.md` (features and science) and `docs/FUNK_PASS_PLAN.md
 - `data/questions.json`, `data/weekly.json`: question bank. Run `npm run validate` after editing. New questions start with `reviewedBy: "pending"` until a person checks them.
 - `public/brand/`: logo files (see Design system)
 - `lib/motion.js`: shared springs. `lib/pip.js`: Pip reactions.
-- Still to come in the funk pass: `components/WorkInProgress.js` and `data/roadmap.json` (step F8).
+- `components/WorkInProgress.js` and `data/roadmap.json`: the Work in progress page. Every lock or "not built" entry point opens it with `onOpenWip(id)`. Statuses live in the JSON.
 
 ## Design system
 

@@ -18,6 +18,7 @@ import { setSoundEnabled } from '@/lib/sound';
 import { storyCards } from '@/lib/interview';
 import ReviewDeck from '@/components/ReviewDeck';
 import Splash from '@/components/Splash';
+import WorkInProgress from '@/components/WorkInProgress';
 import { PipProvider } from '@/lib/pip';
 import Onboarding from '@/components/Onboarding';
 import {
@@ -37,6 +38,7 @@ export default function Page() {
   const prevKey = useRef(null); // the last screen that was on display, so the right transition plays
   const keyRef = useRef(null); // the screen being drawn now
   const splashDecided = useRef(false);
+  const [wip, setWip] = useState(null); // the Work in progress page: { focus } while it is open
   const [wipe, setWipe] = useState(false); // the royal wipe into the set-complete screen
   const [splash, setSplash] = useState(null); // 'full' for new users, 'short' for returning users, once per session
 
@@ -158,13 +160,27 @@ export default function Page() {
   const labelFor = { daily: "Today's set", extra: 'Extra practice', review: 'Review', category: 'Quick practice', weekly: 'This week in business', bonus: 'Bonus question (double XP)' }[session?.kind];
 
   /* ---- render ---- */
+  const openWip = (focus) => setWip({ focus });
   let body;
-  if (!st.onboarded || !TRACKS[st.track]) {
+  if (wip) {
+    // opened from any lock or "not built" entry point. Back returns to wherever you were.
+    body = (
+      <WorkInProgress
+        focus={wip.focus}
+        interest={st.interest || {}}
+        onInterest={(id) => persist({ ...ref.current, interest: { ...(ref.current.interest || {}), [id]: true } })}
+        onBack={() => setWip(null)}
+        soundOn={st.sound !== false}
+        onSound={(sound) => persist({ ...ref.current, sound })}
+      />
+    );
+  } else if (!st.onboarded || !TRACKS[st.track]) {
     body = (
       <Onboarding
         initial={st}
         initialTrack={urlTrack}
         ready={!splash}
+        onOpenWip={openWip}
         soundOn={st.sound !== false}
         onSound={(sound) => persist({ ...ref.current, sound })}
         // save the profile so far, then pick the quick-check questions from the chosen track
@@ -223,13 +239,14 @@ export default function Page() {
   } else if (tab === 'home') {
     body = <Home st={st} ready={!splash} onStartDaily={startDaily} onStartExtra={startExtra} onStartReview={startReview} onStartWeekly={startWeekly} onStartCategory={startCategory} onDismiss={(key) => persist({ ...ref.current, dismissed: [...(ref.current.dismissed || []), key] })} goto={setTab} />;
   } else if (tab === 'interview') {
-    body = <Interview st={st} onUpdate={(fn) => persist(fn(ref.current))} onImmersive={setImmersive} />;
+    body = <Interview st={st} onOpenWip={openWip} onUpdate={(fn) => persist(fn(ref.current))} onImmersive={setImmersive} />;
   } else if (tab === 'review') {
-    body = <Review st={st} onOpenDeck={startDeck} />;
+    body = <Review st={st} onOpenDeck={startDeck} onOpenWip={openWip} />;
   } else if (tab === 'account') {
     body = (
       <Account
         st={st}
+        onOpenWip={openWip}
         onPatch={(patch) => persist(updateProfile(ref.current, patch))}
         onSaveGoals={(patch) => persist(applyGoals(ref.current, patch))}
         onReset={() => { persist(resetState()); setEvents([]); setTab('home'); }}
@@ -241,12 +258,12 @@ export default function Page() {
     );
   }
 
-  const showTabs = st.onboarded && st.track && !session && !deck && !immersive;
+  const showTabs = st.onboarded && st.track && !session && !deck && !immersive && !wip;
   // pop-ups wait until nobody is mid-question
   const quizActive = !!session && !session.done;
-  const idle = st.onboarded && !quizActive && !deck && !immersive;
+  const idle = st.onboarded && !quizActive && !deck && !immersive && !wip;
   // a new key fades the next screen in; answering inside a quiz never changes it
-  const screenKey = !st.onboarded || !TRACKS[st.track]
+  const screenKey = wip ? 'wip' : !st.onboarded || !TRACKS[st.track]
     ? 'onboarding'
     : deck ? 'deck' : session ? (session.done ? 'summary' : 'quiz') : tab;
   keyRef.current = screenKey; // read by the effect near the top; writing the same value twice is harmless
@@ -254,7 +271,7 @@ export default function Page() {
     <MotionConfig reducedMotion="user">
      <PipProvider>
       <div className="app">
-        {st.onboarded && (
+        {st.onboarded && !wip && (
           <div className="relative z-30 -mb-1 flex justify-end">
             <SoundToggle on={st.sound !== false} onChange={(sound) => persist({ ...ref.current, sound })} />
           </div>

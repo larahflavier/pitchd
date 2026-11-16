@@ -1,21 +1,27 @@
 # Pitchd
 
-3-minute daily interview prep for business students. Next.js 14 (App Router), no backend, no accounts. Progress and streaks live in the browser's localStorage.
+3-minute daily interview prep for business and engineering students. Next.js 14 (App Router), no backend, no accounts. Progress and streaks live in the browser's localStorage (`pitchd:v2`).
 
 ## What's in it
 
-- **Daily set**: 5 questions (2 shared: behavioral, basics, or news, plus 3 from your track). Tracks: Accounting, Marketing, Supply Chain, Management.
-- **Streaks**: complete the daily set to extend. Extra practice does not count.
-- **Missed-question review**: a miss returns after 1 day. Get it right and it returns after 3, then 7, then it's marked fixed. Miss it again and the ladder restarts. Up to 2 due reviews are folded into each daily set.
-- **Mastery**: accuracy by category (Behavioral, Business Basics, News, your track).
+- **Daily set**: sized to the minutes you pick (5, 8, or 16 questions), built from a rule-based study plan for your track, goal, and interview date. Tracks: Accounting, Finance, Marketing, Supply Chain, Management, Mechanical, Electrical/Computer, Industrial & Systems.
+- **Streaks**: finish the daily set to extend. A missed day is covered by a streak freeze (1 a week). Extra practice does not count.
+- **Review**: a missed question returns after 1, 3, 7, 14, then 30 days, and is mastered after the 30-day review. Review cards flip and swipe, and there is a Missed list you can filter by category.
+- **Interview practice**: quick drills, mock interviews, and a STAR story builder. All self-check, no AI.
+- **Progress**: study plan, XP and levels, badges, a skill map, and accuracy by category.
 - **This Week in Business**: one news card, chosen from `data/weekly.json` by `weekOf` date.
-- **Copy my stats** (Progress tab): friends can paste a summary back to you for the pilot.
-- **Pre-selected track links**: `https://YOUR-URL/?track=accounting` (also `marketing`, `supplychain`, `management`).
+- **Account tab**: profile, goals (editing rebuilds the plan), reminders, sound, and "Download my data" or "Copy my stats" for the pilot.
+- **Pre-selected track links**: `https://YOUR-URL/?track=accounting` (also `finance`, `marketing`, `supplychain`, `management`, `mechanical`, `electrical`, `industrial`).
+
+## Not built yet
+
+Accounts and sync, Premium (payments), AI feedback, school leagues, Pip outfits, and the Pip redraw. They appear inside the app on the Work in progress page, which reads `data/roadmap.json`. Change a status there to "in-progress" or "live" when one ships. Keep this list in sync with `docs/PRODUCT_PLAN.md`.
 
 ## Editing content
 
-- Questions: `data/questions.json`. Each has `cat`, `q`, `a` (correct), `w` (exactly 3 wrong answers), `e` (explanation). Options are shuffled at runtime. A `flag` field is a note for the reviewer and is never shown to users.
+- Questions: `data/questions.json`. Each has `cat`, `q`, `a` (correct), and `e` (explanation). Multiple-choice questions also have `w` (exactly 3 wrong answers). Options are shuffled at runtime. New questions use the extended fields (`track`, `type`, `difficulty`, `keyPoints`, `tier`, `reviewedBy`, ...) and start with `reviewedBy: "pending"` until a person checks them. A `flag` field is a note for the reviewer and is never shown to users.
 - Weekly card: add an entry to `data/weekly.json` with `weekOf` set to a Monday (YYYY-MM-DD). The newest entry on or before today is shown. **The three seeded entries are placeholders. Replace them with real headlines.**
+- Work in progress page: edit `data/roadmap.json` (the six items and their statuses).
 - After editing, run `npm run validate`.
 
 ## Run locally

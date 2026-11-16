@@ -20,7 +20,7 @@ const STAR = 'M0 -9L2.5 -2.5L9 0L2.5 2.5L0 9L-2.5 2.5L-9 0L-2.5 -2.5Z';
 // where the combo stars fly to, from the middle of the head
 const STAR_SPOTS = [[-70, -40], [70, -44], [-86, 6], [88, 4], [-44, -70], [46, -72], [0, -84], [-30, 60], [32, 62]];
 
-export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sparkles = false, reactive = false, pointAngle = -100, pointSide = 'right', onDark = false }) {
+export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sparkles = false, reactive = false, pointAngle = -100, pointSide = 'right', onDark = false, tool = true }) {
   const reduced = useReducedMotion();
   const reaction = usePipReaction(reactive);
   const [auto, setAuto] = useState(null); // where a one-shot pose settles (wave, hype, oops...)
@@ -265,7 +265,7 @@ export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sp
           <Sticker variant="bubble" fill="white" rotate={8}>zz</Sticker>
         </motion.span>
       )}
-      {effPose === 'tinker' && (
+      {effPose === 'tinker' && tool && (
         <motion.span
           className="pointer-events-none absolute -right-5 top-6 grid size-9 place-items-center rounded-full border-2 border-royal bg-surface text-royal"
           animate={reduced ? undefined : { y: [0, -5, 0], rotate: [-12, 12, -12] }}

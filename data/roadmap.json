@@ -1,0 +1,57 @@
+{
+  "statuses": {
+    "not-built": "Not built yet",
+    "in-progress": "In progress",
+    "live": "Live"
+  },
+  "items": [
+    {
+      "id": "accounts",
+      "icon": "UserRound",
+      "name": "Accounts and sync",
+      "does": "Save your progress across devices so you can switch from phone to laptop.",
+      "why": "Needs a database. Your progress lives on this device for now.",
+      "status": "not-built"
+    },
+    {
+      "id": "premium",
+      "icon": "CreditCard",
+      "name": "Premium",
+      "does": "Unlock the bigger question bank and the Interview modes.",
+      "why": "Payments come after accounts.",
+      "status": "not-built"
+    },
+    {
+      "id": "ai",
+      "icon": "Sparkles",
+      "name": "AI feedback",
+      "does": "Grade your spoken or written answers and tell you what to fix.",
+      "why": "Needs accounts first so we can keep it fair and affordable.",
+      "status": "not-built"
+    },
+    {
+      "id": "leagues",
+      "icon": "Trophy",
+      "name": "School leagues",
+      "does": "Compete with students at Lehigh and nearby schools.",
+      "why": "Needs accounts and enough users to be fun.",
+      "status": "not-built"
+    },
+    {
+      "id": "outfits",
+      "icon": "Shirt",
+      "name": "Pip outfits",
+      "does": "Dress Pip up for your streaks and badges.",
+      "why": "Pip's art is being reworked first.",
+      "status": "not-built"
+    },
+    {
+      "id": "redraw",
+      "icon": "PencilRuler",
+      "name": "Pip redraw",
+      "does": "A new, flatter Pip that matches the rest of the app.",
+      "why": "In the design queue (CLAUDE.md next step 2).",
+      "status": "not-built"
+    }
+  ]
+}

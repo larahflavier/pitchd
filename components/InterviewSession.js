@@ -17,7 +17,7 @@ const RATINGS = [
 
 // Runs a list of questions: type an answer, then check yourself against the model answer.
 // seconds > 0 adds a countdown per answer (mock interviews). No AI, nothing is graded for you.
-export default function InterviewSession({ title, items, seconds = 0, onFinish, onExit }) {
+export default function InterviewSession({ title, items, seconds = 0, onFinish, onExit, onOpenWip }) {
   const [idx, setIdx] = useState(0);
   const [phase, setPhase] = useState('answer'); // answer | check
   const [text, setText] = useState('');
@@ -75,11 +75,11 @@ export default function InterviewSession({ title, items, seconds = 0, onFinish, 
             </li>
           ))}
         </ul>
-        <div className="mt-3 flex items-center gap-3 rounded-[20px] bg-periwinkle-soft p-4">
+        <button onClick={() => onOpenWip?.('ai')} className="mt-3 flex items-center gap-3 rounded-[20px] bg-azure-soft p-4 text-left text-royal">
           <Lock size={18} strokeWidth={2.25} className="shrink-0" />
           <span className="flex-1 text-[14px] font-semibold">AI feedback on every answer</span>
-          <span className="rounded-full bg-surface px-2.5 py-1 text-[11px] font-bold">Premium</span>
-        </div>
+          <span className="rounded-full bg-surface px-2.5 py-1 text-[11px] font-bold">Not built yet</span>
+        </button>
         <button className={cn(PILL, 'mt-5')} onClick={onExit}>Done</button>
       </div>
     );
