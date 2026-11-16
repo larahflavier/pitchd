@@ -8,8 +8,8 @@ import Mascot from './Mascot';
 import ProgressRing from './ui/ProgressRing';
 import { cn } from '@/lib/utils';
 import {
-  TRACKS, CAT_LABELS, byId, currentStreak, dueIds, loopCards, dailyDone, currentWeekly,
-  planProfile, mastery, fixedCount, lastNDays, weekDays, todayStr, statsText, SET_SIZE, setSize, CATEGORY_SET_SIZE, SHARED,
+  TRACKS, CAT_LABELS, byId, currentStreak, dueIds, dailyDone, currentWeekly,
+  planProfile, mastery, lastNDays, weekDays, todayStr, statsText, setSize, CATEGORY_SET_SIZE, SHARED,
 } from '@/lib/engine';
 import Roadmap from './Roadmap';
 import { describePlan } from '@/lib/curriculum';
@@ -113,7 +113,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           <span className="grid size-12 shrink-0 place-items-center rounded-full bg-surface"><RotateCcw size={21} strokeWidth={2} /></span>
           <div className="min-w-0 flex-1">
             <h3 className="text-base font-bold">{due} due today</h3>
-            <p className="text-[13px] font-medium leading-snug text-ink/70">Missed questions come back after 1, 3, then 7 days.</p>
+            <p className="text-[13px] font-medium leading-snug text-ink/70">Missed questions come back after 1, 3, 7, 14, then 30 days.</p>
           </div>
           <button className={PILL + ' shrink-0 !px-5 !py-2.5 !text-sm'} onClick={onStartReview}>Review</button>
         </section>
@@ -219,51 +219,6 @@ export function Summary({ kind, results, st, onHome, onMore }) {
   );
 }
 
-/* --------------------------------- Review -------------------------------- */
-export function Review({ st, onStartReview }) {
-  const cards = loopCards(st);
-  const due = dueIds(st).length;
-  const t = todayStr();
-  const fmt = (d) => {
-    if (d <= t) return 'Due now';
-    const diff = Math.round((new Date(d + 'T00:00:00') - new Date(t + 'T00:00:00')) / 86400000);
-    return diff === 1 ? 'Tomorrow' : `In ${diff} days`;
-  };
-  return (
-    <div className="main">
-      <div className="h1" style={{ marginBottom: 12 }}>Review</div>
-      <div className="stats" style={{ marginBottom: 14 }}>
-        <div className="stat"><small>In review</small><b>{cards.length}</b></div>
-        <div className="stat"><small>Fixed for good</small><b>{fixedCount(st)}</b></div>
-      </div>
-      {cards.length === 0 ? (
-        <div className="card center">
-          <div style={{ display: 'flex', justifyContent: 'center' }}><Mascot mood="happy" size={110} /></div>
-          <h3 style={{ marginTop: 8 }}>Nothing to review</h3>
-          <p>Miss a question and it'll show up here. I bring it back after 1, 3, then 7 days.</p>
-        </div>
-      ) : (
-        <>
-          <button className="btn" disabled={due === 0} onClick={onStartReview}>
-            {due ? `Review ${Math.min(due, SET_SIZE)} due now` : 'Nothing due yet'}
-          </button>
-          <div className="spacer" />
-          <div className="card">
-            <ul className="list">
-              {cards.map((c) => (
-                <li key={c.id}>
-                  <span>{byId[c.id].q}<br /><span className="hint">{CAT_LABELS[byId[c.id].cat]}</span></span>
-                  <small>{fmt(c.due)}</small>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
 /* -------------------------------- Progress ------------------------------- */
 export function Progress({ st, onTrack, onName, onReset }) {
   const m = mastery(st);
@@ -296,7 +251,7 @@ export function Progress({ st, onTrack, onName, onReset }) {
             </div>
           );
         })}
-        <p>Based on every answer so far, including misses. Questions you fix in Review count toward your fixed total.</p>
+        <p>Based on every answer so far, including misses. Questions you master in Review count toward your mastered total.</p>
       </div>
 
       <div className="card">

@@ -1,13 +1,13 @@
 'use client';
 import { useMemo, useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Bookmark } from 'lucide-react';
 import Mascot from './Mascot';
 import { byId, shuffle, CAT_LABELS } from '@/lib/engine';
 
 const RIGHT_LINES = ['Nice one!', 'That\'s it!', 'Locked in.', 'Correct!', 'You got it.'];
 const WRONG_LINES = ['Close. This one comes back soon.', 'No worries, I\'ll save it for later.', 'Good to see now, not in the interview.'];
 
-export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewIds = [] }) {
+export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewIds = [], saved = [], onToggleSave }) {
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [results, setResults] = useState([]);
@@ -45,6 +45,16 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
         {reviewIds.includes(q.id) && <span className="chip review">Review</span>}
         {q.weekly && <span className="chip">This week</span>}
         {label && !q.weekly && !reviewIds.includes(q.id) && <span className="hint">{label}</span>}
+        {onToggleSave && (
+          <button
+            aria-label={saved.includes(q.id) ? 'Remove bookmark' : 'Bookmark this question'}
+            aria-pressed={saved.includes(q.id)}
+            onClick={() => onToggleSave(q.id)}
+            className="float-right grid size-9 place-items-center rounded-full border border-line bg-surface"
+          >
+            <Bookmark size={16} strokeWidth={2.25} className={saved.includes(q.id) ? 'fill-ink' : ''} />
+          </button>
+        )}
       </div>
 
       <div className="qtext">{q.q}</div>

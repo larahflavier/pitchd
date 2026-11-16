@@ -3,12 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import Quiz from '@/components/Quiz';
 import TabBar from '@/components/TabBar';
 import Placeholder from '@/components/Placeholder';
-import { Home, Summary, Review, Progress } from '@/components/Screens';
+import { Home, Summary, Progress } from '@/components/Screens';
+import Review from '@/components/Review';
+import ReviewDeck from '@/components/ReviewDeck';
 import Landing from '@/components/Landing';
 import Onboarding from '@/components/Onboarding';
 import {
   TRACKS, loadState, refreshPlan, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
-  recordAnswer, completeDaily, buildQuickCheck, SET_SIZE,
+  recordAnswer, completeDaily, buildQuickCheck, deckIds, toggleSaved,
 } from '@/lib/engine';
 
 export default function Page() {
@@ -17,6 +19,7 @@ export default function Page() {
   const [tab, setTab] = useState('home');
   const [session, setSession] = useState(null); // { kind, ids, reviewIds, results? }
   const [urlTrack, setUrlTrack] = useState(null);
+  const [deck, setDeck] = useState(null); // { title, ids }: a flip-card review session
   const [started, setStarted] = useState(false); // past the landing page
 
   useEffect(() => {
@@ -56,10 +59,12 @@ export default function Page() {
     const ids = buildSet(ref.current, { extra: true });
     setSession({ kind: 'extra', ids, reviewIds: dueIds(ref.current) });
   };
-  const startReview = () => {
-    const ids = dueIds(ref.current).slice(0, SET_SIZE);
-    if (ids.length) setSession({ kind: 'review', ids, reviewIds: ids });
+  const DECK_TITLES = { due: 'Due today', missed: 'Missed', saved: 'Saved' };
+  const startDeck = (kind) => {
+    const ids = deckIds(ref.current, kind);
+    if (ids.length) setDeck({ title: DECK_TITLES[kind], ids });
   };
+  const startReview = () => startDeck('due');
   const startWeekly = () => {
     const w = currentWeekly();
     if (w) setSession({ kind: 'weekly', ids: [w.id], reviewIds: [] });
@@ -104,6 +109,17 @@ export default function Page() {
     ) : (
       <Landing onStart={() => setStarted(true)} />
     );
+  } else if (deck) {
+    body = (
+      <ReviewDeck
+        title={deck.title}
+        ids={deck.ids}
+        saved={st.saved}
+        onToggleSave={(qid) => persist(toggleSaved(ref.current, qid))}
+        onGrade={(qid, got) => persist(recordAnswer(ref.current, qid, got))}
+        onClose={() => setDeck(null)}
+      />
+    );
   } else if (session?.done) {
     body = (
       <Summary
@@ -123,6 +139,8 @@ export default function Page() {
         onAnswer={onAnswer}
         onFinish={onFinish}
         onClose={closeSession}
+        saved={st.saved}
+        onToggleSave={(qid) => persist(toggleSaved(ref.current, qid))}
       />
     );
   } else if (tab === 'home') {
@@ -130,7 +148,7 @@ export default function Page() {
   } else if (tab === 'interview') {
     body = <Placeholder title="Interview" text="Mock interviews and the story builder are coming soon." />;
   } else if (tab === 'review') {
-    body = <Review st={st} onStartReview={startReview} />;
+    body = <Review st={st} onOpenDeck={startDeck} />;
   } else if (tab === 'account') {
     body = <Placeholder title="Account" text="Your profile, goals, and settings are coming soon." />;
   } else {
@@ -144,7 +162,7 @@ export default function Page() {
     );
   }
 
-  const showTabs = st.onboarded && st.track && !session;
+  const showTabs = st.onboarded && st.track && !session && !deck;
   return (
     <div className="app">
       {body}
