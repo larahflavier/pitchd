@@ -1,9 +1,7 @@
 'use client';
-import { useEffect } from 'react';
-import { play, vibrate } from '@/lib/sound';
 import {
   Flame, Check, Target, RotateCcw, CircleCheck, Newspaper, MessagesSquare, BookOpen,
-  Calculator, Megaphone, Truck, Users, CalendarClock, Snowflake,
+  Calculator, Megaphone, Truck, Users, CalendarClock, Snowflake, Sparkles, X,
 } from 'lucide-react';
 import Mascot from './Mascot';
 import ProgressRing from './ui/ProgressRing';
@@ -13,6 +11,8 @@ import {
   planProfile, mastery, lastNDays, weekDays, todayStr, setSize, CATEGORY_SET_SIZE, SHARED,
 } from '@/lib/engine';
 import Roadmap from './Roadmap';
+import SkillMap from './SkillMap';
+import Badges from './Badges';
 import { describePlan } from '@/lib/curriculum';
 import { levelProgress, freezesLeft } from '@/lib/gamify';
 
@@ -24,7 +24,7 @@ const CAT_ICONS = {
 const CHIP_LABELS = { ...CAT_LABELS, basics: 'Basics' };
 const PILL = 'inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-[15px] font-semibold text-white active:scale-[0.98]';
 
-export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWeekly, onStartCategory, goto }) {
+export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWeekly, onStartCategory, onDismiss, goto }) {
   const streak = currentStreak(st);
   const done = dailyDone(st);
   const due = dueIds(st).length;
@@ -36,6 +36,11 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
   const size = st.today?.date === t ? st.today.ids.length : setSize(st);
   const shown = done ? size : Math.min(answered, size);
   const cats = [...SHARED, st.track];
+  // fresh starts: a new theme every Monday, and a nudge to refresh goals in the first weeks of January and August
+  const now = new Date();
+  const dismissed = st.dismissed || [];
+  const mondayKey = `monday-${t}`;
+  const semKey = now.getDate() <= 21 && (now.getMonth() === 0 || now.getMonth() === 7) ? `semester-${now.getFullYear()}-${now.getMonth()}` : null;
   const lvl = levelProgress(st.xp || 0);
   const freeze = freezesLeft(st, t);
   const plan = describePlan(planProfile(st), st.plan, t, TRACKS[st.track].label);
@@ -67,6 +72,29 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
         <p className="-mt-2 flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground">
           <Snowflake size={14} strokeWidth={2.25} />Streak freeze ready this week. It covers a missed day automatically.
         </p>
+      )}
+
+      {/* fresh start */}
+      {semKey && !dismissed.includes(semKey) && (
+        <section className="flex items-start gap-3 rounded-[28px] bg-periwinkle-soft p-4">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-surface"><Sparkles size={19} strokeWidth={2} /></span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-[15px] font-bold">New semester, fresh start</h3>
+            <p className="text-[13px] font-medium text-ink/70">Update your goals to rebuild your plan for the new term.</p>
+            <button className="mt-2 text-[13px] font-bold text-periwinkle-strong" onClick={() => goto('account')}>Update goals</button>
+          </div>
+          <button aria-label="Dismiss" onClick={() => onDismiss(semKey)} className="grid size-8 shrink-0 place-items-center rounded-full"><X size={16} strokeWidth={2.25} /></button>
+        </section>
+      )}
+      {now.getDay() === 1 && !plan.finished && !dismissed.includes(mondayKey) && (
+        <section className="flex items-start gap-3 rounded-[28px] bg-periwinkle-soft p-4">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-surface"><Sparkles size={19} strokeWidth={2} /></span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-[15px] font-bold">New week, new theme</h3>
+            <p className="text-[13px] font-medium text-ink/70">{plan.step}. Your plan updated this morning.</p>
+          </div>
+          <button aria-label="Dismiss" onClick={() => onDismiss(mondayKey)} className="grid size-8 shrink-0 place-items-center rounded-full"><X size={16} strokeWidth={2.25} /></button>
+        </section>
       )}
 
       {/* action card */}
@@ -206,40 +234,6 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
   );
 }
 
-/* -------------------------------- Summary -------------------------------- */
-export function Summary({ kind, results, st, onHome, onMore }) {
-  const right = results.filter((r) => r.correct).length;
-  const missed = results.filter((r) => !r.correct);
-  const mood = right / results.length >= 0.6 ? 'happy' : 'oops';
-  const streak = currentStreak(st);
-  useEffect(() => {
-    if (kind === 'daily') { play('complete'); vibrate([40, 40, 80]); }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  return (
-    <div className="main center">
-      <div className="summary-mascot"><Mascot mood={mood} size={170} sparkles /></div>
-      <div className="big">{right}/{results.length}</div>
-      <p className="hint" style={{ margin: '8px 0 14px' }}>
-        {kind === 'daily' ? (mood === 'happy' ? 'Set complete. Nice work.' : 'Set complete. The misses are the useful part.') : 'Solid practice.'}
-      </p>
-      {kind === 'daily' && (
-        <div className="stats" style={{ marginBottom: 14 }}>
-          <div className="stat"><small>Streak</small><b>{streak}</b></div>
-          <div className="stat"><small>Best</small><b>{st.best}</b></div>
-        </div>
-      )}
-      {missed.length > 0 && (
-        <div className="card misslist">
-          <h3>Coming back for review</h3>
-          <ul>{missed.map((r) => <li key={r.id}>{byId[r.id].q}</li>)}</ul>
-        </div>
-      )}
-      <button className="btn" onClick={onHome}>Back home</button>
-      <button className="btn ghost" onClick={onMore}>Practice {setSize(st)} more</button>
-    </div>
-  );
-}
-
 /* -------------------------------- Progress ------------------------------- */
 export function Progress({ st }) {
   const m = mastery(st);
@@ -249,6 +243,8 @@ export function Progress({ st }) {
     <div className="main">
       <div className="h1" style={{ marginBottom: 12 }}>Progress</div>
       <Roadmap st={st} />
+      <SkillMap st={st} />
+      <Badges st={st} />
       <div className="kpis">
         <div className="stat"><small>Streak</small><b>{currentStreak(st)}</b></div>
         <div className="stat"><small>Best</small><b>{st.best}</b></div>
