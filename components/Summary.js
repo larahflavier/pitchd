@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { animate, useReducedMotion } from 'motion/react';
+import { animate, motion, useReducedMotion } from 'motion/react';
+import { spring } from '@/lib/motion';
 import { Check, Gift, Zap } from 'lucide-react';
 import Mascot from './Mascot';
 import ProgressRing from './ui/ProgressRing';
@@ -63,7 +64,15 @@ export default function Summary({ kind, results, st, bonus, onOpenBonus, onHome,
           </div>
         </div>
       ) : (
-        <div className="summary-mascot"><Mascot mood={mood} pose={mood === 'happy' ? 'hype' : 'oops'} size={150} sparkles /></div>
+        <motion.div
+          className="my-2 flex justify-center"
+          // Pip drops in with a bounce, just after the royal wipe lifts
+          initial={{ y: -70, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ ...spring.bouncy, delay: 0.45 }}
+        >
+          <Mascot mood={mood} pose={mood === 'happy' ? 'hype' : 'oops'} size={150} sparkles />
+        </motion.div>
       )}
       <div className="big">{right}/{results.length}</div>
       <p className="hint" style={{ margin: '8px 0 14px' }}>

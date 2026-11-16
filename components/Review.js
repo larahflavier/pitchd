@@ -1,6 +1,7 @@
 'use client';
 import { RotateCcw, XCircle, Bookmark, NotebookPen, LayoutGrid, ChevronRight, Lock, Trophy, CalendarDays } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Stagger from './ui/Stagger';
 import { CAT_LABELS, quizCatsFor, deckIds, forecast, fixedCount, loopCards, mastery, answeredByCat } from '@/lib/engine';
 
 function DeckRow({ Icon, title, sub, count, onClick, disabled, premium, tone = 'bg-app' }) {
@@ -46,7 +47,7 @@ export default function Review({ st, onOpenDeck }) {
   const seen = answeredByCat(st);
 
   return (
-    <div className="main flex flex-col gap-4">
+    <Stagger className="main flex flex-col gap-4">
       <h1 className="text-[22px] font-bold tracking-tight">Review</h1>
 
       {/* stats */}
@@ -131,6 +132,6 @@ export default function Review({ st, onOpenDeck }) {
           Missed cards return after 1, 3, 7, 14, then 30 days. Pass the 30-day review and the card is mastered. "Again" sends it back to day 1.
         </p>
       </section>
-    </div>
+    </Stagger>
   );
 }

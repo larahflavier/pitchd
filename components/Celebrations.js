@@ -6,6 +6,7 @@ import { BadgeIcon } from './Badges';
 import { badgeById } from '@/lib/badges';
 import { play, vibrate } from '@/lib/sound';
 import { bigBurst } from '@/lib/celebrate';
+import { spring } from '@/lib/motion';
 import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 // Level-up and badge pop-ups. They queue while you are answering and show on the next calm screen,
@@ -35,7 +36,7 @@ export default function Celebrations({ events, idle, onNext }) {
       {ev && (
         <motion.div
           key={ev.type + (ev.id || ev.level)}
-          className="fixed inset-0 z-50 grid place-items-center bg-ink/45 p-6"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/45"
           role="dialog"
           aria-modal="true"
           aria-label={ev.type === 'level' ? `Level ${ev.level}` : badge?.title}
@@ -45,12 +46,19 @@ export default function Celebrations({ events, idle, onNext }) {
           transition={{ duration: 0.2 }}
         >
           <motion.div
-            className="w-full max-w-[340px] rounded-[36px] bg-surface p-7 text-center"
-            initial={{ scale: 0.88, y: 16 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.95, y: 8 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+            // a sheet: it slides up from the bottom and can be dragged down to dismiss
+            className="w-full max-w-[430px] rounded-t-[36px] bg-surface px-7 pt-3 text-center"
+            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 28px)' }}
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={spring.soft}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.6 }}
+            onDragEnd={(_, info) => { if (info.offset.y > 90 || info.velocity.y > 500) onNext(); }}
           >
+            <span className="mx-auto mb-4 block h-1.5 w-10 rounded-full bg-line" aria-hidden="true" />
             {ev.type === 'level' ? (
               <>
                 <Mascot mood="happy" pose="celebrate" size={96} sparkles />

@@ -33,6 +33,9 @@ export default function Page() {
   const [deck, setDeck] = useState(null); // { title, ids, items? }: a flip-card review session
   const [events, setEvents] = useState([]); // level-ups and badges waiting for a calm screen
   const [immersive, setImmersive] = useState(false); // hides the tab bar during an interview session
+  const prevKey = useRef(null); // the last screen that was on display, so the right transition plays
+  const keyRef = useRef(null); // the screen being drawn now
+  const [wipe, setWipe] = useState(false); // the royal wipe into the set-complete screen
   const [splash, setSplash] = useState(null); // 'full' for new users, 'short' for returning users, once per session
 
   useEffect(() => {
@@ -54,6 +57,14 @@ export default function Page() {
     }
     setSplash(mode);
   }, []);
+
+  // after every draw: remember which screen is up, and start the royal wipe when a quiz ends
+  useEffect(() => {
+    const k = keyRef.current;
+    if (k === prevKey.current) return;
+    if (k === 'summary' && prevKey.current === 'quiz') setWipe(true);
+    prevKey.current = k;
+  });
 
   // keep the audio module in step with the saved setting (Account and the header both write it)
   useEffect(() => { if (st) setSoundEnabled(st.sound !== false); }, [st?.sound]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -198,6 +209,7 @@ export default function Page() {
         onClose={closeSession}
         saved={st.saved}
         onToggleSave={(qid) => persist(toggleSaved(ref.current, qid))}
+        fromHome={prevKey.current === 'home'}
       />
     );
   } else if (tab === 'home') {
@@ -229,6 +241,7 @@ export default function Page() {
   const screenKey = !st.onboarded || !TRACKS[st.track]
     ? 'onboarding'
     : deck ? 'deck' : session ? (session.done ? 'summary' : 'quiz') : tab;
+  keyRef.current = screenKey; // read by the effect near the top; writing the same value twice is harmless
   return (
     <MotionConfig reducedMotion="user">
      <PipProvider>
@@ -240,13 +253,28 @@ export default function Page() {
         )}
         <motion.div
           key={screenKey}
-          className="flex flex-1 flex-col"
-          initial={{ opacity: 0, y: 6 }}
+          className="relative flex flex-1 flex-col"
+          // Home to Quiz: the card grows into the screen instead (shared layout), so no fade here.
+          // Every other change is a quick crossfade with an 8px rise. Nothing slides sideways.
+          initial={prevKey.current === 'home' && screenKey === 'quiz' ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
+          transition={{ duration: 0.15, ease: 'easeOut' }}
         >
           {body}
         </motion.div>
+        <AnimatePresence>
+          {wipe && (
+            <motion.div
+              key="wipe"
+              className="pointer-events-none absolute inset-0 z-40 bg-royal"
+              initial={{ y: '100%' }}
+              animate={{ y: '0%' }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.38, ease: [0.2, 0.8, 0.2, 1] }}
+              onAnimationComplete={() => setWipe(false)}
+            />
+          )}
+        </AnimatePresence>
         {showTabs && <TabBar tab={tab} onChange={setTab} reviewDue={dueNow} />}
         <Celebrations events={events} idle={idle} onNext={() => setEvents((e) => e.slice(1))} />
         <AnimatePresence>

@@ -10,6 +10,8 @@ import {
   TRACKS, CAT_LABELS, byId, currentStreak, dueIds, dailyDone, currentWeekly,
   planProfile, mastery, lastNDays, weekDays, todayStr, setSize, CATEGORY_SET_SIZE, quizCatsFor,
 } from '@/lib/engine';
+import { motion } from 'motion/react';
+import Stagger from './ui/Stagger';
 import Roadmap from './Roadmap';
 import SkillMap from './SkillMap';
 import Badges from './Badges';
@@ -48,7 +50,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
   const plan = describePlan(planProfile(st), st.plan, t, TRACKS[st.track].label);
 
   return (
-    <div className="main flex flex-col gap-4">
+    <Stagger className="main flex flex-col gap-4">
       {/* header */}
       <div className="flex items-center justify-between">
         <div>
@@ -100,7 +102,10 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
       )}
 
       {/* action card */}
-      <section className="rounded-[32px] bg-periwinkle p-5 text-white">
+      <section className="relative rounded-[32px] p-5 text-white">
+        {/* this panel is shared with the quiz: it grows from the card to the whole screen when you press Start */}
+        <motion.div layoutId="set-card" className="absolute inset-0 bg-azure" style={{ borderRadius: 32 }} transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }} />
+        <div className="relative">
         <div className="flex items-start justify-between">
           <span className="grid size-12 place-items-center rounded-full bg-surface text-royal"><Target size={22} strokeWidth={2} /></span>
           <ProgressRing value={shown} max={size} size={58} stroke={5} trackClass="stroke-white" fillClass="stroke-ink">
@@ -129,6 +134,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           )}
         </div>
         {done && <p className="mt-3 text-sm font-medium text-white/90">Extra practice won't change your streak.</p>}
+        </div>
       </section>
 
       {/* category practice */}
@@ -232,7 +238,7 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           })}
         </div>
       </section>
-    </div>
+    </Stagger>
   );
 }
 
@@ -242,7 +248,7 @@ export function Progress({ st }) {
   const cats = quizCatsFor(st.track);
   const days = lastNDays(21);
   return (
-    <div className="main">
+    <Stagger className="main">
       <div className="h1" style={{ marginBottom: 12 }}>Progress</div>
       <Roadmap st={st} />
       <SkillMap st={st} />
@@ -272,6 +278,6 @@ export function Progress({ st }) {
         <h3>Last 3 weeks</h3>
         <div className="cal">{days.map((d) => <div key={d} className={st.history[d]?.setDone ? 'on' : ''} title={d} />)}</div>
       </div>
-    </div>
+    </Stagger>
   );
 }

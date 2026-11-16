@@ -1,5 +1,6 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { X, Bookmark } from 'lucide-react';
 import Mascot from './Mascot';
 import { byId, shuffle, CAT_LABELS } from '@/lib/engine';
@@ -16,12 +17,19 @@ const RIGHT_LINES = [
 ];
 const WRONG_LINES = ['Close. This one comes back soon.', 'No worries, I\'ll save it for later.', 'Good to see now, not in the interview.'];
 
-export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewIds = [], saved = [], onToggleSave }) {
+export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewIds = [], saved = [], onToggleSave, fromHome = false }) {
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [results, setResults] = useState([]);
   const [combo, setCombo] = useState(0); // correct answers in a row this set
   const pip = usePip();
+  // the backdrop starts as the Home card's azure when we come from Home, then settles to the page color
+  const [settled, setSettled] = useState(!fromHome);
+  useEffect(() => {
+    if (settled) return;
+    const t = setTimeout(() => setSettled(true), 60);
+    return () => clearTimeout(t);
+  }, [settled]);
   const q = byId[ids[idx]];
 
   const options = useMemo(() => shuffle([q.a, ...q.w]), [q.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -52,13 +60,29 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
   const line = (correct ? RIGHT_LINES : WRONG_LINES)[(idx + q.id.length) % (correct ? RIGHT_LINES.length : WRONG_LINES.length)];
 
   return (
-    <div className="main" key={q.id}>
+    <div className="main">
+      {/* shared with the Home card: the card grows into this backdrop */}
+      <motion.div
+        layoutId="set-card"
+        className={'absolute -z-10 transition-colors duration-300 ' + (settled ? 'bg-app' : 'bg-azure')}
+        style={{ left: -18, right: -18, top: 0, bottom: 'calc(-1 * (env(safe-area-inset-bottom) + 12px))', borderRadius: 0 }}
+        transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+      />
       <div className="qtop">
         <button className="x" onClick={onClose} aria-label="Close"><X size={18} strokeWidth={2.25} /></button>
         <div className="bar"><i style={{ width: `${((idx + (answered ? 1 : 0)) / ids.length) * 100}%` }} /></div>
         <div className="count">{idx + 1}/{ids.length}</div>
       </div>
 
+      {/* The question card. Tapping Next sends it flying up (200ms) and the next one scales in underneath. The answers never animate. */}
+      <div className="relative">
+       <AnimatePresence initial mode="popLayout">
+        <motion.div
+          key={q.id}
+          initial={idx === 0 ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1, transition: { duration: 0.2, delay: idx === 0 ? 0.12 : 0 } }}
+          exit={{ opacity: 0, y: -70, transition: { duration: 0.2, ease: 'easeIn' } }}
+        >
       <div className="flex items-start justify-between gap-3">
        <div className="min-w-0 flex-1">
         <span className="chip">{CAT_LABELS[q.cat]}</span>
@@ -112,6 +136,9 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
           <button className="btn" onClick={next}>{idx + 1 >= ids.length ? 'See results' : 'Next'}</button>
         </>
       )}
+        </motion.div>
+       </AnimatePresence>
+      </div>
     </div>
   );
 }

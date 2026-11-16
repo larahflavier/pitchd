@@ -56,7 +56,9 @@ export default function Splash({ mode = 'full', soundOn, onSound, onDone }) {
           animate={full && !reduced ? { scaleX: [1, 1.1, 0.97, 1.05, 1], scaleY: [1, 0.88, 1.03, 0.98, 1] } : { scaleX: 1, scaleY: 1 }}
           transition={{ delay: 0.25, duration: 0.45, times: [0, 0.25, 0.55, 0.8, 1] }}
         >
-          <Image src="/brand/pitchd-bubble.png" width={660} height={631} priority alt="" className="h-auto w-full" />
+          <motion.div layoutId="brand-bubble" transition={spring.soft}>
+            <Image src="/brand/pitchd-bubble.png" width={660} height={631} priority alt="" className="h-auto w-full" />
+          </motion.div>
         </motion.div>
       </motion.div>
 

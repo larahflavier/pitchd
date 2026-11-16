@@ -2,11 +2,13 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion } from 'motion/react';
 import { ChevronLeft, Check, CircleCheck, Circle } from 'lucide-react';
 import Mascot from './Mascot';
 import Quiz from './Quiz';
 import SoundToggle from './SoundToggle';
 import { cn } from '@/lib/utils';
+import { spring } from '@/lib/motion';
 import { TRACKS, TRACK_GROUPS, todayStr } from '@/lib/engine';
 import { buildRoadmap } from '@/lib/curriculum';
 import { SCHOOLS, YEARS, GOALS, INDUSTRIES, TIMELINES, MINUTES, REMIND_TIMES, MAJORS_SOON } from '@/lib/profile';
@@ -29,9 +31,21 @@ const META = {
   quick: { title: 'Quick check', sub: '5 mixed questions. No pressure, this just sets your starting point.' },
 };
 
+// Choices pop in one after another (40ms apart) when a step opens.
+const POP = { hidden: { opacity: 0, scale: 0.94, y: 8 }, show: { opacity: 1, scale: 1, y: 0, transition: spring.bouncy } };
+function PopList({ className, children }) {
+  return (
+    <motion.div className={className} initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}>
+      {children}
+    </motion.div>
+  );
+}
+
 function Option({ selected, onClick, children, sub, disabled }) {
   return (
-    <button
+    <motion.button
+      variants={POP}
+      whileTap={{ scale: 0.97 }}
       onClick={onClick}
       disabled={disabled}
       aria-pressed={selected}
@@ -46,13 +60,15 @@ function Option({ selected, onClick, children, sub, disabled }) {
         {sub && <span className="mt-0.5 block text-[13px] font-medium text-muted-foreground">{sub}</span>}
       </span>
       {selected && <Check size={18} strokeWidth={3} className="shrink-0" />}
-    </button>
+    </motion.button>
   );
 }
 
 function Chip({ selected, onClick, children }) {
   return (
-    <button
+    <motion.button
+      variants={POP}
+      whileTap={{ scale: 0.97 }}
       onClick={onClick}
       aria-pressed={selected}
       className={cn(
@@ -61,7 +77,7 @@ function Chip({ selected, onClick, children }) {
       )}
     >
       {children}
-    </button>
+    </motion.button>
   );
 }
 
@@ -174,7 +190,14 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
           <>
             <div className="flex justify-end"><SoundToggle on={soundOn} onChange={onSound} /></div>
             <div className="flex flex-1 flex-col items-center justify-center pb-6 text-center">
-              <Image src="/brand/pitchd-bubble.png" width={660} height={631} priority alt="Pitchd" className="h-auto w-[44%] max-w-[190px]" />
+              {/* the splash bubble flies here when the splash lifts */}
+              <div className="aspect-[660/631] w-[44%] max-w-[190px]">
+                {ready && (
+                  <motion.div layoutId="brand-bubble" className="size-full" transition={spring.soft}>
+                    <Image src="/brand/pitchd-bubble.png" width={660} height={631} priority alt="Pitchd" className="h-full w-full" />
+                  </motion.div>
+                )}
+              </div>
               <h1 className="mt-6 max-w-[17rem] text-[34px] font-bold leading-[1.05] tracking-tight">Interview prep in 3 minutes a day.</h1>
             </div>
 
@@ -195,7 +218,9 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
           <>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Image src="/brand/pitchd-bubble.png" width={660} height={631} alt="Pitchd" className="h-11 w-auto" />
+                <motion.div layoutId="brand-bubble" className="aspect-[660/631] h-11" transition={spring.soft}>
+                  <Image src="/brand/pitchd-bubble.png" width={660} height={631} alt="Pitchd" className="h-full w-full" />
+                </motion.div>
                 <button onClick={back} aria-label="Back" className="grid size-9 place-items-center rounded-full bg-white/15 text-white active:scale-95">
                   <ChevronLeft size={19} strokeWidth={2.5} />
                 </button>
@@ -224,15 +249,15 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
             )}
 
             {id === 'school' && (
-              <div className="flex flex-col gap-2.5">
+              <PopList className="flex flex-col gap-2.5">
                 {SCHOOLS.map((s) => <Option key={s} selected={d.school === s} onClick={() => set({ school: s })}>{s}</Option>)}
-              </div>
+              </PopList>
             )}
 
             {id === 'year' && (
-              <div className="flex flex-col gap-2.5">
+              <PopList className="flex flex-col gap-2.5">
                 {YEARS.map((y) => <Option key={y} selected={d.year === y} onClick={() => set({ year: y })}>{y}</Option>)}
-              </div>
+              </PopList>
             )}
 
             {id === 'major' && (
@@ -240,11 +265,11 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
                 {Object.entries(TRACK_GROUPS).map(([gid, glabel]) => (
                   <div key={gid} className="mb-4">
                     <p className="mb-2 text-[13px] font-bold text-muted-foreground">{glabel}</p>
-                    <div className="flex flex-col gap-2.5">
+                    <PopList className="flex flex-col gap-2.5">
                       {Object.entries(TRACKS).filter(([, t]) => t.group === gid).map(([tid, t]) => (
                         <Option key={tid} selected={d.track === tid} onClick={() => set({ track: tid })} sub={t.blurb}>{t.label}</Option>
                       ))}
-                    </div>
+                    </PopList>
                   </div>
                 ))}
                 <p className="mb-2 mt-2 text-[13px] font-semibold text-muted-foreground">Coming soon</p>
@@ -259,21 +284,21 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
 
             {id === 'goal' && (
               <>
-                <div className="flex flex-col gap-2.5">
+                <PopList className="flex flex-col gap-2.5">
                   {GOALS.map((g) => <Option key={g.id} selected={d.goal === g.id} onClick={() => set({ goal: g.id })}>{g.label}</Option>)}
-                </div>
+                </PopList>
                 <p className="mb-2 mt-6 text-[15px] font-bold">Which industry?</p>
-                <div className="flex flex-wrap gap-2">
+                <PopList className="flex flex-wrap gap-2">
                   {INDUSTRIES.map((i) => <Chip key={i.id} selected={d.industry === i.id} onClick={() => set({ industry: i.id })}>{i.label}</Chip>)}
-                </div>
+                </PopList>
               </>
             )}
 
             {id === 'timeline' && (
               <>
-                <div className="flex flex-col gap-2.5">
+                <PopList className="flex flex-col gap-2.5">
                   {TIMELINES.map((t) => <Option key={t.id} selected={d.tlKind === t.id} onClick={() => set({ tlKind: t.id })}>{t.label}</Option>)}
-                </div>
+                </PopList>
                 {d.tlKind === 'date' && (
                   <input
                     type="date"
@@ -303,11 +328,11 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
                   ))}
                 </div>
                 <p className="mb-2 mt-7 text-[15px] font-bold">What time works best?</p>
-                <div className="flex flex-wrap gap-2">
+                <PopList className="flex flex-wrap gap-2">
                   {REMIND_TIMES.map((t) => (
                     <Chip key={t.time} selected={d.remindAt === t.time} onClick={() => set({ remindAt: t.time })}>{t.label}</Chip>
                   ))}
-                </div>
+                </PopList>
                 <input type="time" aria-label="Reminder time" className={cn(FIELD, 'mt-3')} value={d.remindAt} onChange={(e) => set({ remindAt: e.target.value })} />
                 <p className="mt-3 text-[13px] font-medium text-muted-foreground">
                   Your browser will ask to allow notifications. Reminders start working once accounts launch.
