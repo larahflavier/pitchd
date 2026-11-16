@@ -53,7 +53,7 @@ export default function Celebrations({ events, idle, onNext }) {
           >
             {ev.type === 'level' ? (
               <>
-                <Mascot mood="happy" size={96} sparkles />
+                <Mascot mood="happy" pose="celebrate" size={96} sparkles />
                 <p className="mt-2 text-[13px] font-bold text-muted-foreground">Level up</p>
                 <motion.p
                   className="text-[64px] font-bold leading-none tracking-tight"

@@ -24,7 +24,7 @@ export default function Splash({ mode = 'full', soundOn, onSound, onDone }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[80] flex cursor-pointer flex-col items-center justify-center bg-royal"
+      className="no-press fixed inset-0 z-[80] flex cursor-pointer flex-col items-center justify-center bg-royal"
       role="button"
       tabIndex={0}
       aria-label="Pitchd. Tap to skip."

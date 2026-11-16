@@ -17,6 +17,7 @@ import { setSoundEnabled } from '@/lib/sound';
 import { storyCards } from '@/lib/interview';
 import ReviewDeck from '@/components/ReviewDeck';
 import Splash from '@/components/Splash';
+import { PipProvider } from '@/lib/pip';
 import Onboarding from '@/components/Onboarding';
 import {
   TRACKS, loadState, refreshPlan, updateProfile, applyGoals, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
@@ -230,6 +231,7 @@ export default function Page() {
     : deck ? 'deck' : session ? (session.done ? 'summary' : 'quiz') : tab;
   return (
     <MotionConfig reducedMotion="user">
+     <PipProvider>
       <div className="app">
         {st.onboarded && (
           <div className="-mb-1 flex justify-end">
@@ -259,6 +261,7 @@ export default function Page() {
           )}
         </AnimatePresence>
       </div>
+     </PipProvider>
     </MotionConfig>
   );
 }

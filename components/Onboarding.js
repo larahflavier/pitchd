@@ -2,13 +2,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'motion/react';
 import { ChevronLeft, Check, CircleCheck, Circle } from 'lucide-react';
 import Mascot from './Mascot';
 import Quiz from './Quiz';
 import SoundToggle from './SoundToggle';
 import { cn } from '@/lib/utils';
-import { spring } from '@/lib/motion';
 import { TRACKS, TRACK_GROUPS, todayStr } from '@/lib/engine';
 import { buildRoadmap } from '@/lib/curriculum';
 import { SCHOOLS, YEARS, GOALS, INDUSTRIES, TIMELINES, MINUTES, REMIND_TIMES, MAJORS_SOON } from '@/lib/profile';
@@ -68,7 +66,6 @@ function Chip({ selected, onClick, children }) {
 }
 
 export default function Onboarding({ initial, initialTrack, ready = true, soundOn, onSound, onStartQuick, onAnswer, onDone }) {
-  const reduced = useReducedMotion();
   const [step, setStep] = useState(0);
   const [note, setNote] = useState(false); // "accounts are coming soon" on the welcome screen
   const [d, setD] = useState({
@@ -184,13 +181,7 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
             <div className="relative">
               {/* Pip peeks over the top edge of the button */}
               <div className="pointer-events-none absolute -top-[84px] right-7 h-[88px] overflow-hidden">
-                <motion.div
-                  initial={reduced ? false : { y: 90 }}
-                  animate={{ y: ready ? 0 : 90 }}
-                  transition={{ ...spring.soft, delay: ready ? 0.2 : 0 }}
-                >
-                  <Mascot mood="happy" size={104} />
-                </motion.div>
+                {ready && <Mascot mood="happy" pose="peek" size={104} />}
               </div>
               <button className={`${PILL} relative`} onClick={() => setStep(1)}>Get started</button>
               <div className="mt-4 flex flex-col items-center gap-2.5 text-[15px] font-semibold">
@@ -325,7 +316,7 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
             )}
 
             {id === 'quick' && (
-              <div className="flex justify-center pt-4"><Mascot mood="neutral" size={130} /></div>
+              <div className="flex justify-center pt-4"><Mascot mood="neutral" pose="think" size={130} /></div>
             )}
 
             {id === 'plan' && roadmap && (

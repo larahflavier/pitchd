@@ -63,7 +63,7 @@ export default function Summary({ kind, results, st, bonus, onOpenBonus, onHome,
           </div>
         </div>
       ) : (
-        <div className="summary-mascot"><Mascot mood={mood} size={150} sparkles /></div>
+        <div className="summary-mascot"><Mascot mood={mood} pose={mood === 'happy' ? 'hype' : 'oops'} size={150} sparkles /></div>
       )}
       <div className="big">{right}/{results.length}</div>
       <p className="hint" style={{ margin: '8px 0 14px' }}>

@@ -112,6 +112,13 @@
     -webkit-tap-highlight-color: transparent;
   }
   button { font: inherit; color: inherit; cursor: pointer; }
+  /* Press feedback for every tappable: scale to 0.97, then spring back (the overshoot curve gives the spring feel). */
+  :where(button, a[href], [role='button'], summary):not(.no-press) {
+    transition-property: transform;
+    transition-duration: 160ms;
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  :where(button:not(:disabled), a[href], [role='button'], summary):not(.no-press):active { transform: scale(0.97); }
   button:disabled { cursor: default; }
 }
 

@@ -79,7 +79,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
   if (done) {
     return (
       <div className="main flex flex-col items-center text-center">
-        <div className="mt-6"><Mascot mood="happy" size={130} sparkles /></div>
+        <div className="mt-6"><Mascot mood="happy" pose="celebrate" size={130} sparkles /></div>
         <h1 className="mt-3 text-[26px] font-bold tracking-tight">{ids.length ? 'Deck done' : 'Nothing here yet'}</h1>
         {ids.length > 0 && (
           <p className="mt-1.5 text-[15px] font-medium text-muted-foreground">
@@ -117,7 +117,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
         onPointerMove={onMove}
         onPointerUp={onUp}
         onPointerCancel={() => { drag.current = null; setDx(0); }}
-        className="relative h-[360px] select-none [perspective:1200px]"
+        className="no-press relative h-[360px] select-none [perspective:1200px]"
         style={{
           touchAction: 'pan-y',
           transform: `translateX(${shift}px) rotate(${shift / 25}deg)`,

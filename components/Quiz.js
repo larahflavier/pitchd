@@ -4,6 +4,7 @@ import { X, Bookmark } from 'lucide-react';
 import Mascot from './Mascot';
 import { byId, shuffle, CAT_LABELS } from '@/lib/engine';
 import { play } from '@/lib/sound';
+import { usePip } from '@/lib/pip';
 
 // Praise the method, not the person.
 const RIGHT_LINES = [
@@ -20,6 +21,7 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
   const [picked, setPicked] = useState(null);
   const [results, setResults] = useState([]);
   const [combo, setCombo] = useState(0); // correct answers in a row this set
+  const pip = usePip();
   const q = byId[ids[idx]];
 
   const options = useMemo(() => shuffle([q.a, ...q.w]), [q.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -35,8 +37,11 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
     const n = right ? combo + 1 : 0;
     setCombo(n);
     play(right ? (n === 5 ? 'combo5' : n === 3 ? 'combo' : 'correct') : 'wrong');
+    // Pip reacts after the answer is already marked
+    pip.react(right ? (n === 5 ? 'combo5' : n === 3 ? 'combo' : 'correct') : 'wrong');
   };
   const next = () => {
+    pip.cancel(); // tapping Next ends any reaction right away
     const r = [...results, { id: q.id, correct }];
     if (idx + 1 >= ids.length) return onFinish(r);
     setResults(r);
@@ -54,7 +59,8 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
         <div className="count">{idx + 1}/{ids.length}</div>
       </div>
 
-      <div>
+      <div className="flex items-start justify-between gap-3">
+       <div className="min-w-0 flex-1">
         <span className="chip">{CAT_LABELS[q.cat]}</span>
         {reviewIds.includes(q.id) && <span className="chip review">Review</span>}
         {q.weekly && <span className="chip">This week</span>}
@@ -69,6 +75,9 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
             <Bookmark size={16} strokeWidth={2.25} className={saved.includes(q.id) ? 'fill-ink' : ''} />
           </button>
         )}
+       </div>
+       {/* Pip watches the question and reacts to your answer. Small, so it never covers the options. */}
+       <div className="-mt-1 shrink-0"><Mascot pose="think" size={56} reactive /></div>
       </div>
 
       <div className="qtext">{q.q}</div>
@@ -91,7 +100,6 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
         <>
           <div className="explain">
             <div className="fbrow">
-              <Mascot mood={correct ? 'happy' : 'oops'} size={64} />
               <div>
                 {correct && combo >= 3 && (
                   <span className={'combo' + (combo >= 5 ? ' combo-big' : '')} aria-live="polite">{combo} in a row</span>
