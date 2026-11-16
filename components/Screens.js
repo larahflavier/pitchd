@@ -1,8 +1,9 @@
 'use client';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { play, vibrate } from '@/lib/sound';
 import {
   Flame, Check, Target, RotateCcw, CircleCheck, Newspaper, MessagesSquare, BookOpen,
-  Calculator, Megaphone, Truck, Users, CalendarClock,
+  Calculator, Megaphone, Truck, Users, CalendarClock, Snowflake,
 } from 'lucide-react';
 import Mascot from './Mascot';
 import ProgressRing from './ui/ProgressRing';
@@ -13,6 +14,7 @@ import {
 } from '@/lib/engine';
 import Roadmap from './Roadmap';
 import { describePlan } from '@/lib/curriculum';
+import { levelProgress, freezesLeft } from '@/lib/gamify';
 
 /* --------------------------------- Home --------------------------------- */
 const CAT_ICONS = {
@@ -34,6 +36,8 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
   const size = st.today?.date === t ? st.today.ids.length : setSize(st);
   const shown = done ? size : Math.min(answered, size);
   const cats = [...SHARED, st.track];
+  const lvl = levelProgress(st.xp || 0);
+  const freeze = freezesLeft(st, t);
   const plan = describePlan(planProfile(st), st.plan, t, TRACKS[st.track].label);
 
   return (
@@ -50,6 +54,20 @@ export function Home({ st, onStartDaily, onStartExtra, onStartReview, onStartWee
           <Flame size={16} strokeWidth={2.25} className="text-teal" />{streak}
         </div>
       </div>
+
+      {/* level and streak freeze */}
+      <div className="-mt-1 flex items-center gap-3">
+        <span className="shrink-0 rounded-full bg-periwinkle-soft px-3 py-1 text-[13px] font-bold">Level {lvl.level}</span>
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-line" role="progressbar" aria-label="XP to next level" aria-valuemin={0} aria-valuemax={lvl.span} aria-valuenow={lvl.into}>
+          <div className="h-full rounded-full bg-periwinkle-strong" style={{ width: `${lvl.pct}%` }} />
+        </div>
+        <span className="shrink-0 text-[12px] font-semibold text-muted-foreground">{lvl.into}/{lvl.span} XP</span>
+      </div>
+      {streak > 0 && freeze > 0 && (
+        <p className="-mt-2 flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground">
+          <Snowflake size={14} strokeWidth={2.25} />Streak freeze ready this week. It covers a missed day automatically.
+        </p>
+      )}
 
       {/* action card */}
       <section className="rounded-[32px] bg-periwinkle p-5">
@@ -194,6 +212,9 @@ export function Summary({ kind, results, st, onHome, onMore }) {
   const missed = results.filter((r) => !r.correct);
   const mood = right / results.length >= 0.6 ? 'happy' : 'oops';
   const streak = currentStreak(st);
+  useEffect(() => {
+    if (kind === 'daily') { play('complete'); vibrate([40, 40, 80]); }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="main center">
       <div className="summary-mascot"><Mascot mood={mood} size={170} sparkles /></div>

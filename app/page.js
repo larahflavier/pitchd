@@ -6,6 +6,8 @@ import { Home, Summary, Progress } from '@/components/Screens';
 import Review from '@/components/Review';
 import Interview from '@/components/Interview';
 import Account from '@/components/Account';
+import SoundToggle from '@/components/SoundToggle';
+import { setSoundEnabled } from '@/lib/sound';
 import { storyCards } from '@/lib/interview';
 import ReviewDeck from '@/components/ReviewDeck';
 import Landing from '@/components/Landing';
@@ -33,6 +35,9 @@ export default function Page() {
     const p = new URLSearchParams(window.location.search).get('track');
     if (p && TRACKS[p]) setUrlTrack(p);
   }, []);
+
+  // keep the audio module in step with the saved setting (Account and the header both write it)
+  useEffect(() => { if (st) setSoundEnabled(st.sound !== false); }, [st?.sound]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const persist = (n) => { ref.current = n; setSt(n); saveState(n); };
 
@@ -126,7 +131,7 @@ export default function Page() {
         saved={st.saved}
         onToggleSave={deck.items ? undefined : (qid) => persist(toggleSaved(ref.current, qid))}
         // story cards are practice only: they don't touch the review schedule
-        onGrade={(qid, got) => { if (!deck.items) persist(recordAnswer(ref.current, qid, got)); }}
+        onGrade={(qid, got) => { if (!deck.items) persist(recordAnswer(ref.current, qid, got, { source: 'deck' })); }}
         onClose={() => setDeck(null)}
       />
     );
@@ -177,6 +182,9 @@ export default function Page() {
   const showTabs = st.onboarded && st.track && !session && !deck && !immersive;
   return (
     <div className="app">
+      <div className="-mb-1 flex justify-end">
+        <SoundToggle on={st.sound !== false} onChange={(sound) => persist({ ...ref.current, sound })} />
+      </div>
       {body}
       {showTabs && <TabBar tab={tab} onChange={setTab} reviewDue={dueNow} />}
     </div>

@@ -3,14 +3,23 @@ import { useMemo, useState } from 'react';
 import { X, Bookmark } from 'lucide-react';
 import Mascot from './Mascot';
 import { byId, shuffle, CAT_LABELS } from '@/lib/engine';
+import { play } from '@/lib/sound';
 
-const RIGHT_LINES = ['Nice one!', 'That\'s it!', 'Locked in.', 'Correct!', 'You got it.'];
+// Praise the method, not the person.
+const RIGHT_LINES = [
+  'Good call. That answer fits every detail in the question.',
+  'Nice reasoning. You went with the idea, not the buzzword.',
+  'Right idea. This is the reasoning interviewers listen for.',
+  'Solid. Checking each option against the question works.',
+  'That is how to work it out: rule out, then confirm.',
+];
 const WRONG_LINES = ['Close. This one comes back soon.', 'No worries, I\'ll save it for later.', 'Good to see now, not in the interview.'];
 
 export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewIds = [], saved = [], onToggleSave }) {
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [results, setResults] = useState([]);
+  const [combo, setCombo] = useState(0); // correct answers in a row this set
   const q = byId[ids[idx]];
 
   const options = useMemo(() => shuffle([q.a, ...q.w]), [q.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -21,6 +30,11 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
     if (answered) return;
     setPicked(opt);
     onAnswer(q.id, opt === q.a);
+    // sound and the combo chip come after the answer is saved, so answering stays instant
+    const right = opt === q.a;
+    const n = right ? combo + 1 : 0;
+    setCombo(n);
+    play(right ? (n === 5 ? 'combo5' : n === 3 ? 'combo' : 'correct') : 'wrong');
   };
   const next = () => {
     const r = [...results, { id: q.id, correct }];
@@ -79,6 +93,9 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
             <div className="fbrow">
               <Mascot mood={correct ? 'happy' : 'oops'} size={64} />
               <div>
+                {correct && combo >= 3 && (
+                  <span className={'combo' + (combo >= 5 ? ' combo-big' : '')} aria-live="polite">{combo} in a row</span>
+                )}
                 <b className={correct ? 'ok' : 'no'}>{line}</b>
                 <div style={{ marginTop: 4 }}>{q.e}</div>
               </div>

@@ -170,6 +170,8 @@
   .explain .ok { color: var(--teal); }
   .explain .no { color: var(--red); }
   .fbrow { display: flex; gap: 10px; align-items: flex-start; }
+  .combo { display: inline-block; margin: 0 8px 4px 0; padding: 3px 10px; border-radius: 99px; background: var(--teal-soft); color: var(--ink); font-size: 12px; font-weight: 700; animation: pop .25s ease; }
+  .combo-big { background: var(--teal); color: var(--ink); font-size: 14px; padding: 4px 14px; animation: pop .5s ease; }
   .fbrow svg { flex-shrink: 0; width: 56px; height: auto; }
 
   /* summary */
