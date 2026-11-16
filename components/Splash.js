@@ -24,16 +24,26 @@ export default function Splash({ mode = 'full', soundOn, onSound, onDone }) {
 
   return (
     <motion.div
-      className="no-press fixed inset-0 z-[80] flex cursor-pointer flex-col items-center justify-center bg-royal"
+      className="no-press fixed inset-0 z-[80] cursor-pointer"
       role="button"
       tabIndex={0}
       aria-label="Pitchd. Tap to skip."
       onClick={() => done.current()}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') done.current(); }}
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
     >
+      {/* The royal panel is shared with the Home hero card: on Home it shrinks into the card.
+          Elsewhere it simply stays royal while the contents fade, then goes. */}
+      <motion.div
+        layoutId="set-card"
+        className="absolute inset-0 bg-royal"
+        style={{ borderRadius: 0 }}
+        exit={{ opacity: 1, transition: { duration: 0.5 } }}
+        transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+      />
+      <motion.div
+        className="absolute inset-0 flex flex-col items-center justify-center"
+        exit={{ opacity: 0, transition: { duration: 0.2 } }}
+      >
       <div
         className="absolute right-4"
         style={{ top: 'calc(env(safe-area-inset-top) + 16px)' }}
@@ -85,6 +95,7 @@ export default function Splash({ mode = 'full', soundOn, onSound, onDone }) {
           <i className="block h-0.5 w-6 rounded-full bg-cyan" aria-hidden="true" />
         </motion.p>
       )}
+      </motion.div>
     </motion.div>
   );
 }

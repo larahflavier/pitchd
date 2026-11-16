@@ -10,6 +10,7 @@ import { usePipReaction } from '@/lib/pip';
 //   mood: 'neutral' | 'happy' | 'oops'  (the face)
 //   pose: what Pip is doing, see POSES below  (the movement)
 //   reactive: also respond to usePip().react(...) from anywhere in the app
+//   onDark: Pip is on a royal surface, so the arms and tuft use a light tint (royal on royal would vanish)
 // Only transform and opacity animate. With reduced motion Pip holds still.
 // Pose names: idle, peek, wave, think, hype, combo, oops, celebrate, sleepy, point, tinker.
 
@@ -19,7 +20,7 @@ const STAR = 'M0 -9L2.5 -2.5L9 0L2.5 2.5L0 9L-2.5 2.5L-9 0L-2.5 -2.5Z';
 // where the combo stars fly to, from the middle of the head
 const STAR_SPOTS = [[-70, -40], [70, -44], [-86, 6], [88, 4], [-44, -70], [46, -72], [0, -84], [-30, 60], [32, 62]];
 
-export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sparkles = false, reactive = false, pointAngle = -100 }) {
+export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sparkles = false, reactive = false, pointAngle = -100, pointSide = 'right', onDark = false }) {
   const reduced = useReducedMotion();
   const reaction = usePipReaction(reactive);
   const [auto, setAuto] = useState(null); // where a one-shot pose settles (wave, hype, oops...)
@@ -118,10 +119,14 @@ export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sp
         calm(4.5);
         break;
       case 'point': {
-        go(armR, { rotate: pointAngle }, { ...spring.snappy });
+        // pointSide 'left' lifts the left arm (so Pip points at something to his left)
+        const arm = pointSide === 'left' ? armL : armR;
+        const a = pointSide === 'left' ? -pointAngle : pointAngle;
+        const dx = pointSide === 'left' ? -3 : 3;
+        go(arm, { rotate: a }, { ...spring.snappy });
         timers.push(setInterval(() => {
-          go(armR, { rotate: [pointAngle, pointAngle + 12, pointAngle] }, { duration: 0.5, ease: 'easeInOut' });
-          go(root, { x: [0, 3, 0] }, { duration: 0.5, ease: 'easeInOut' });
+          go(arm, { rotate: [a, a + (pointSide === 'left' ? -12 : 12), a] }, { duration: 0.5, ease: 'easeInOut' });
+          go(root, { x: [0, dx, 0] }, { duration: 0.5, ease: 'easeInOut' });
         }, 8000));
         calm(3);
         break;
@@ -135,7 +140,7 @@ export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sp
         calm(3);
     }
     return () => { stops.forEach((s) => s.stop()); timers.forEach(clearTimeout); };
-  }, [effPose, reduced, reaction?.id, pointAngle]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [effPose, reduced, reaction?.id, pointAngle, pointSide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ----- blink every 3 to 5 seconds -----
   useEffect(() => {
@@ -152,6 +157,7 @@ export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sp
   }, [reduced, effMood, effPose]);
 
   const looking = effMood === 'oops';
+  const limb = onDark ? 'fill-azure-soft' : 'fill-royal';
   const startsHidden = effPose === 'peek' && !reduced;
 
   return (
@@ -169,13 +175,13 @@ export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sp
           {/* arms */}
           {effMood === 'happy' ? (
             <>
-              <g ref={armL} style={ORIGIN('50% 10%')}><ellipse cx="30" cy="104" rx="11" ry="19" transform="rotate(-28 30 104)" className="fill-royal" /></g>
-              <g ref={armR} style={ORIGIN('50% 10%')}><ellipse cx="170" cy="104" rx="11" ry="19" transform="rotate(28 170 104)" className="fill-royal" /></g>
+              <g ref={armL} style={ORIGIN('50% 10%')}><ellipse cx="30" cy="104" rx="11" ry="19" transform="rotate(-28 30 104)" className={limb} /></g>
+              <g ref={armR} style={ORIGIN('50% 10%')}><ellipse cx="170" cy="104" rx="11" ry="19" transform="rotate(28 170 104)" className={limb} /></g>
             </>
           ) : (
             <>
-              <g ref={armL} style={ORIGIN('50% 10%')}><ellipse cx="29" cy="146" rx="11" ry="19" transform="rotate(14 29 146)" className="fill-royal" /></g>
-              <g ref={armR} style={ORIGIN('50% 10%')}><ellipse cx="171" cy="146" rx="11" ry="19" transform="rotate(-14 171 146)" className="fill-royal" /></g>
+              <g ref={armL} style={ORIGIN('50% 10%')}><ellipse cx="29" cy="146" rx="11" ry="19" transform="rotate(14 29 146)" className={limb} /></g>
+              <g ref={armR} style={ORIGIN('50% 10%')}><ellipse cx="171" cy="146" rx="11" ry="19" transform="rotate(-14 171 146)" className={limb} /></g>
             </>
           )}
 
@@ -189,8 +195,8 @@ export default function Mascot({ mood = 'neutral', pose = 'idle', size = 160, sp
 
           {/* tuft */}
           <g ref={tuft} style={ORIGIN('60% 100%')}>
-            <path d="M100 36C94 18 104 6 120 8C118 22 112 32 100 36Z" className="fill-royal" />
-            <path d="M100 36C90 24 82 22 74 24C78 32 88 38 100 36Z" className="fill-royal" />
+            <path d="M100 36C94 18 104 6 120 8C118 22 112 32 100 36Z" className={limb} />
+            <path d="M100 36C90 24 82 22 74 24C78 32 88 38 100 36Z" className={limb} />
           </g>
 
           {/* eyes */}

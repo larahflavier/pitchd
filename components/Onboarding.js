@@ -204,7 +204,7 @@ export default function Onboarding({ initial, initialTrack, ready = true, soundO
             <div className="relative">
               {/* Pip peeks over the top edge of the button */}
               <div className="pointer-events-none absolute -top-[84px] right-7 h-[88px] overflow-hidden">
-                {ready && <Mascot mood="happy" pose="peek" size={104} />}
+                {ready && <Mascot mood="happy" pose="peek" size={104} onDark />}
               </div>
               <button className={`${PILL} relative`} onClick={() => setStep(1)}>Get started</button>
               <div className="mt-4 flex flex-col items-center gap-2.5 text-[15px] font-semibold">

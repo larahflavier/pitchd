@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import Quiz from '@/components/Quiz';
 import TabBar from '@/components/TabBar';
 import { motion, MotionConfig, AnimatePresence } from 'motion/react';
-import { Home, Progress } from '@/components/Screens';
+import { Progress } from '@/components/Screens';
+import { Home } from '@/components/Home';
 import Summary from '@/components/Summary';
 import Celebrations from '@/components/Celebrations';
 import { awardBadges } from '@/lib/badges';
@@ -35,6 +36,7 @@ export default function Page() {
   const [immersive, setImmersive] = useState(false); // hides the tab bar during an interview session
   const prevKey = useRef(null); // the last screen that was on display, so the right transition plays
   const keyRef = useRef(null); // the screen being drawn now
+  const splashDecided = useRef(false);
   const [wipe, setWipe] = useState(false); // the royal wipe into the set-complete screen
   const [splash, setSplash] = useState(null); // 'full' for new users, 'short' for returning users, once per session
 
@@ -48,14 +50,18 @@ export default function Page() {
     if (p && TRACKS[p]) setUrlTrack(p);
     // splash: new users always see the full one. Returning users see a short one once per browser session.
     // If storage is blocked we can't remember, so they see the short one on every open.
-    let mode = s.onboarded ? 'short' : 'full';
-    if (s.onboarded) {
-      try {
-        if (sessionStorage.getItem('pitchd:splash') === '1') mode = null;
-        else sessionStorage.setItem('pitchd:splash', '1');
-      } catch {}
+    // decide once. React's dev mode runs effects twice, and the second run would see the key the first one wrote.
+    if (!splashDecided.current) {
+      splashDecided.current = true;
+      let mode = s.onboarded ? 'short' : 'full';
+      if (s.onboarded) {
+        try {
+          if (sessionStorage.getItem('pitchd:splash') === '1') mode = null;
+          else sessionStorage.setItem('pitchd:splash', '1');
+        } catch {}
+      }
+      setSplash(mode);
     }
-    setSplash(mode);
   }, []);
 
   // after every draw: remember which screen is up, and start the royal wipe when a quiz ends
@@ -213,7 +219,7 @@ export default function Page() {
       />
     );
   } else if (tab === 'home') {
-    body = <Home st={st} onStartDaily={startDaily} onStartExtra={startExtra} onStartReview={startReview} onStartWeekly={startWeekly} onStartCategory={startCategory} onDismiss={(key) => persist({ ...ref.current, dismissed: [...(ref.current.dismissed || []), key] })} goto={setTab} />;
+    body = <Home st={st} ready={!splash} onStartDaily={startDaily} onStartExtra={startExtra} onStartReview={startReview} onStartWeekly={startWeekly} onStartCategory={startCategory} onDismiss={(key) => persist({ ...ref.current, dismissed: [...(ref.current.dismissed || []), key] })} goto={setTab} />;
   } else if (tab === 'interview') {
     body = <Interview st={st} onUpdate={(fn) => persist(fn(ref.current))} onImmersive={setImmersive} />;
   } else if (tab === 'review') {

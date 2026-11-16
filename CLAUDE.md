@@ -8,14 +8,14 @@ Specs: `docs/PRODUCT_PLAN.md` (features and science) and `docs/FUNK_PASS_PLAN.md
 
 - `app/page.js`: top-level state and screen routing (landing, onboarding, home, quiz, summary, review, interview, progress, account)
 - `app/about/`: the About page (`/about`). `copy.js` is generated word for word from section 9 of the product plan.
-- `components/Screens.js`: Home and Progress. `components/Summary.js`: set-complete screen.
-- `components/Landing.js`, `Onboarding.js`: landing page and the 9-step onboarding
+- `components/Home.js`: the Home tab. `components/Screens.js`: Progress. `components/Summary.js`: set-complete screen.
+- `components/Splash.js`, `Onboarding.js`: the opening splash, and onboarding (a welcome screen plus 9 steps)
 - `components/Quiz.js`: one question at a time with feedback. `Review.js` and `ReviewDeck.js`: card decks, flip and swipe.
 - `components/Interview.js`, `InterviewSession.js`, `StoryBuilder.js`: drills, mock interviews, STAR stories (self-check only)
 - `components/Account.js`, `TabBar.js`, `SoundToggle.js`, `Celebrations.js`, `Badges.js`, `SkillMap.js`
 - `components/Roadmap.js`: the study plan roadmap on the Progress tab (not the "work in progress" page)
-- `components/Mascot.js`: Pip, an inline SVG with moods `neutral`, `happy`, `oops`
-- `components/ui/`: `ProgressRing`, `button-styles.js`, `Sticker`, `PeekEyes`, `StackCard`
+- `components/Mascot.js`: Pip, an inline SVG with moods `neutral`, `happy`, `oops` and poses (idle, peek, wave, think, hype, combo, oops, celebrate, sleepy, point, tinker). Any screen can trigger a reaction with `usePip()` from `lib/pip.js`.
+- `components/ui/`: `ProgressRing`, `button-styles.js`, `Sticker`, `PeekEyes`, `StackCard`, `Stagger`
 - `lib/engine.js`: tracks, daily set building, spaced review (1, 3, 7, 14, 30 days), streaks, mastery
 - `lib/storage.js`: `pitchd:v2` load, save, v1 migration, and cleanup of bad data
 - `lib/curriculum.js`, `gamify.js`, `badges.js`, `bonus.js`, `interview.js`, `profile.js`: plan, XP and streak freezes, badges, surprise bonus, interview logic, option lists
@@ -23,7 +23,8 @@ Specs: `docs/PRODUCT_PLAN.md` (features and science) and `docs/FUNK_PASS_PLAN.md
 - `lib/utils.js`: `cn()` helper used by shadcn and 21st.dev components
 - `data/questions.json`, `data/weekly.json`: question bank. Run `npm run validate` after editing. New questions start with `reviewedBy: "pending"` until a person checks them.
 - `public/brand/`: logo files (see Design system)
-- The funk pass adds `components/{Splash,WorkInProgress}.js`, `lib/motion.js`, `lib/pip.js`, and `data/roadmap.json` as its steps land.
+- `lib/motion.js`: shared springs. `lib/pip.js`: Pip reactions.
+- Still to come in the funk pass: `components/WorkInProgress.js` and `data/roadmap.json` (step F8).
 
 ## Design system
 

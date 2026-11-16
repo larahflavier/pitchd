@@ -64,7 +64,7 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
       {/* shared with the Home card: the card grows into this backdrop */}
       <motion.div
         layoutId="set-card"
-        className={'absolute -z-10 transition-colors duration-300 ' + (settled ? 'bg-app' : 'bg-azure')}
+        className={'absolute -z-10 transition-colors duration-300 ' + (settled ? 'bg-app' : 'bg-royal')}
         style={{ left: -18, right: -18, top: 0, bottom: 'calc(-1 * (env(safe-area-inset-bottom) + 12px))', borderRadius: 0 }}
         transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
       />
