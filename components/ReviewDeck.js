@@ -45,22 +45,23 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
 
   const onDown = (e) => {
     if (leaving) return;
-    drag.current = { x: e.clientX, moved: false };
-    e.currentTarget.setPointerCapture?.(e.pointerId);
+    drag.current = { x: e.clientX, moved: false, dx: 0 };
+    try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch {} // keeps the drag even if the finger leaves the card
   };
   const onMove = (e) => {
     const d = drag.current;
     if (!d) return;
     const delta = e.clientX - d.x;
     if (Math.abs(delta) > 6) d.moved = true;
-    if (d.moved && flipped) setDx(delta);
+    // the live distance is kept in the ref too: a quick flick can release before the next render
+    if (d.moved && flipped) { d.dx = delta; setDx(delta); }
   };
   const onUp = () => {
     const d = drag.current;
     drag.current = null;
     if (!d) return;
     if (!d.moved) { play('flip'); setFlipped((f) => !f); return; }
-    if (flipped && Math.abs(dx) > SWIPE) grade(dx > 0);
+    if (flipped && Math.abs(d.dx) > SWIPE) grade(d.dx > 0);
     else setDx(0);
   };
 
@@ -93,7 +94,10 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
 
   const isSaved = saved.includes(q.id);
   const shift = leaving === 'right' ? 420 : leaving === 'left' ? -420 : dx;
-  const tint = flipped && dx > 40 ? 'border-teal' : flipped && dx < -40 ? 'border-red' : 'border-line';
+  const tint = flipped && dx > 40 ? 'border-cyan' : flipped && dx < -40 ? 'border-red' : 'border-line';
+  // the stamps fade in as you drag toward a side, and are fully there when you let go
+  const stampRight = leaving === 'right' ? 1 : flipped ? Math.max(0, Math.min(1, dx / SWIPE)) : 0;
+  const stampLeft = leaving === 'left' ? 1 : flipped ? Math.max(0, Math.min(1, -dx / SWIPE)) : 0;
 
   return (
     <div className="main flex flex-col" key={q.id}>
@@ -102,7 +106,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
           <X size={18} strokeWidth={2.25} />
         </button>
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-line">
-          <div className="h-full rounded-full bg-ink transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${(i / ids.length) * 100}%` }} />
+          <div className="h-full rounded-full bg-royal transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${(i / ids.length) * 100}%` }} />
         </div>
         <span className="min-w-9 text-right text-sm font-bold text-muted-foreground">{i + 1}/{ids.length}</span>
       </div>
@@ -134,7 +138,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
           {/* front */}
           <div className={cn('absolute inset-0 flex flex-col overflow-auto rounded-[32px] border-2 bg-surface p-6 [-webkit-backface-visibility:hidden] [backface-visibility:hidden]', tint)}>
             <div className="flex items-center justify-between">
-              <span className="rounded-full bg-periwinkle-soft px-3 py-1 text-xs font-bold">{CAT_LABELS[q.cat]}</span>
+              <span className="rounded-full bg-azure-soft px-3 py-1 text-xs font-bold text-royal">{CAT_LABELS[q.cat]}</span>
               {onToggleSave && (
                 <button
                   aria-label={isSaved ? 'Remove bookmark' : 'Bookmark'}
@@ -144,7 +148,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
                   onClick={() => onToggleSave(q.id)}
                   className="grid size-9 place-items-center rounded-full bg-app"
                 >
-                  <Bookmark size={17} strokeWidth={2.25} className={isSaved ? 'fill-ink' : ''} />
+                  <Bookmark size={17} strokeWidth={2.25} className={isSaved ? 'fill-royal' : ''} />
                 </button>
               )}
             </div>
@@ -154,7 +158,7 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
 
           {/* back */}
           <div className={cn('absolute inset-0 flex flex-col overflow-auto rounded-[32px] border-2 bg-surface p-6 [transform:rotateY(180deg)] [-webkit-backface-visibility:hidden] [backface-visibility:hidden]', tint)}>
-            <span className="self-start rounded-full bg-teal-soft px-3 py-1 text-xs font-bold">Answer</span>
+            <span className="self-start rounded-full bg-cyan-soft px-3 py-1 text-xs font-bold text-royal">Answer</span>
             <p className="mt-3 whitespace-pre-line text-[19px] font-bold leading-snug tracking-tight">{q.a}</p>
             {q.e && <p className="mt-3 text-[15px] font-medium leading-relaxed text-muted-foreground">{q.e}</p>}
             {Array.isArray(q.keyPoints) && q.keyPoints.length > 0 && (
@@ -164,13 +168,29 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
             )}
           </div>
         </div>
+
+        {/* stamps: they tilt with the card */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute left-5 top-6 -rotate-12 rounded-xl border-[3px] border-royal bg-cyan px-3 py-1 text-[22px] font-bold uppercase tracking-wide text-royal"
+          style={{ opacity: stampRight }}
+        >
+          Got it
+        </span>
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute right-5 top-6 rotate-12 rounded-xl border-[3px] border-royal bg-red px-3 py-1 text-[22px] font-bold uppercase tracking-wide text-white"
+          style={{ opacity: stampLeft }}
+        >
+          Again
+        </span>
       </div>
 
       {/* actions */}
       <div className="mt-5 min-h-[56px]">
         {flipped ? (
           <div className="grid grid-cols-2 gap-3">
-            <button onClick={() => grade(false)} className="inline-flex items-center justify-center gap-2 rounded-full bg-red-soft py-4 text-base font-semibold text-red active:scale-[0.98]">
+            <button onClick={() => grade(false)} className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-red bg-red-soft py-4 text-base font-bold text-red active:scale-[0.97]">
               <RotateCcw size={18} strokeWidth={2.25} />Again
             </button>
             <button onClick={() => grade(true)} className={`${PRIMARY} ${SIZE.lg}`}>

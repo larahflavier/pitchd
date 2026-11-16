@@ -10,6 +10,10 @@ import {
   sessionEntry, addSession, mocksThisWeek, canStartMock, isPremium,
 } from '@/lib/interview';
 import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
+import Stagger from './ui/Stagger';
+import StackCard from './ui/StackCard';
+import PeekEyes from './ui/PeekEyes';
+import Sticker from './ui/Sticker';
 
 const PILL = `${PRIMARY} ${SIZE.lg} w-full`;
 const PREMIUM_TAG = (
@@ -127,48 +131,68 @@ export default function Interview({ st, onUpdate, onImmersive }) {
 
   /* ---- hub ---- */
   const used = mocksThisWeek(st, today);
+  const lockedTag = (
+    <span className="inline-flex items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-[11px] font-bold text-royal">
+      <Lock size={11} strokeWidth={2.5} />Premium
+    </span>
+  );
   return (
-    <div className="main flex flex-col gap-4">
-      <h1 className="text-[22px] font-bold tracking-tight">Interview</h1>
+    <Stagger className="main flex flex-col gap-4">
+      <h1 className="text-[30px] font-bold leading-none tracking-tight">Interview</h1>
 
-      <section className="rounded-[32px] bg-periwinkle p-5 text-white">
-        <span className="grid size-12 place-items-center rounded-full bg-surface text-royal"><Zap size={22} strokeWidth={2} /></span>
-        <h2 className="mt-4 text-[22px] font-bold tracking-tight">Quick drill</h2>
-        <p className="mt-0.5 text-sm font-medium text-white/90">3 questions. Type your answer, then compare it to the model answer.</p>
-        <button className={`${PRIMARY} ${SIZE.md} mt-4`} onClick={startDrill}>Start</button>
-      </section>
+      {/* the three modes, stacked and a little tilted */}
+      <section className="pt-3">
+        <StackCard tilt={-1.3} overlap={20} className="bg-azure text-white">
+          <PeekEyes />
+          <div className="p-5 pb-11">
+            <span className="grid size-12 place-items-center rounded-full bg-surface text-royal"><Zap size={22} strokeWidth={2} /></span>
+            <h2 className="mt-3 text-[26px] font-bold leading-tight tracking-tight">Quick drill</h2>
+            <p className="mt-1 text-sm font-medium text-white/90">3 questions. Type your answer, then compare it to the model answer.</p>
+            <button className={`${PRIMARY} ${SIZE.md} mt-4`} onClick={startDrill}>Start</button>
+          </div>
+          <span className="pointer-events-none absolute -top-3.5 right-4"><Sticker fill="cyan" rotate={9} size={62}>Free</Sticker></span>
+        </StackCard>
 
-      <section className="rounded-[28px] bg-surface p-5">
-        <div className="flex items-start justify-between">
-          <span className="grid size-12 place-items-center rounded-full bg-app"><Timer size={22} strokeWidth={2} /></span>
-          {mockOk ? <span className="rounded-full bg-teal-soft px-3 py-1 text-xs font-bold">{premium ? 'Unlimited' : 'Free mock ready'}</span> : PREMIUM_TAG}
-        </div>
-        <h2 className="mt-4 text-lg font-bold tracking-tight">Mock interview</h2>
-        <p className="mt-0.5 text-sm font-medium text-muted-foreground">
-          5 to 8 questions with a timer on each answer. Pick a company type and length.
-        </p>
-        {mockOk ? (
-          <button className={cn(PILL, 'mt-4')} onClick={() => setView('mock-setup')}>Set up</button>
-        ) : (
-          <>
-            <button className={cn(PILL, 'mt-4')} disabled>Set up</button>
-            <p className="mt-2 text-[13px] font-medium text-muted-foreground">
-              You used your {FREE_MOCKS_PER_WEEK} free mock this week ({used}). The next one unlocks Monday. Unlimited mocks are Premium.
+        <StackCard tilt={1.1} overlap={20} className="bg-royal text-white">
+          <PeekEyes />
+          <div className="p-5 pb-11">
+            <div className="flex items-start justify-between">
+              <span className="grid size-12 place-items-center rounded-full bg-surface text-royal"><Timer size={22} strokeWidth={2} /></span>
+              {mockOk ? (
+                <span className="rounded-full bg-cyan px-3 py-1 text-xs font-bold text-royal">{premium ? 'Unlimited' : 'Free mock ready'}</span>
+              ) : lockedTag}
+            </div>
+            <h2 className="mt-3 text-[26px] font-bold leading-tight tracking-tight">Mock interview</h2>
+            <p className="mt-1 text-sm font-medium text-white/90">5 to 8 questions with a timer on each answer. Pick a company type and length.</p>
+            {mockOk ? (
+              <button className={`${PRIMARY} ${SIZE.md} mt-4`} onClick={() => setView('mock-setup')}>Set up</button>
+            ) : (
+              <>
+                <button className={`${PRIMARY} ${SIZE.md} mt-4`} disabled><Lock size={15} strokeWidth={2.5} />Set up</button>
+                <p className="mt-2 text-[13px] font-medium text-white/85">
+                  You used your {FREE_MOCKS_PER_WEEK} free mock this week ({used}). The next one unlocks Monday. Unlimited mocks are Premium.
+                </p>
+              </>
+            )}
+          </div>
+        </StackCard>
+
+        <StackCard tilt={-0.9} overlap={20} className="bg-cyan text-royal" style={{ marginBottom: 0 }}>
+          <PeekEyes />
+          <div className="p-5">
+            <div className="flex items-start justify-between">
+              <span className="grid size-12 place-items-center rounded-full bg-surface text-royal"><NotebookPen size={22} strokeWidth={2} /></span>
+              <span className="rounded-full bg-surface px-3 py-1 text-[12px] font-bold tabular-nums text-royal">
+                {st.interview.stories.length}{premium ? '' : ` of ${FREE_STORY_LIMIT}`} stories
+              </span>
+            </div>
+            <h2 className="mt-3 text-[26px] font-bold leading-tight tracking-tight">Story builder</h2>
+            <p className="mt-1 text-sm font-medium text-royal/85">
+              Write your STAR stories once. We tag each to the {THEMES.length} behavioral questions it can answer.
             </p>
-          </>
-        )}
-      </section>
-
-      <section className="rounded-[28px] bg-surface p-5">
-        <div className="flex items-start justify-between">
-          <span className="grid size-12 place-items-center rounded-full bg-app"><NotebookPen size={22} strokeWidth={2} /></span>
-          <span className="text-[13px] font-bold text-muted-foreground">{st.interview.stories.length}{premium ? '' : ` of ${FREE_STORY_LIMIT}`} stories</span>
-        </div>
-        <h2 className="mt-4 text-lg font-bold tracking-tight">Story builder</h2>
-        <p className="mt-0.5 text-sm font-medium text-muted-foreground">
-          Write your STAR stories once. We tag each to the {THEMES.length} behavioral questions it can answer.
-        </p>
-        <button className={cn(PILL, 'mt-4')} onClick={() => setView('stories')}>Open</button>
+            <button className={`${SECONDARY} ${SIZE.md} mt-4`} onClick={() => setView('stories')}>Open</button>
+          </div>
+        </StackCard>
       </section>
 
       <section className="rounded-[28px] bg-surface p-5">
@@ -179,7 +203,7 @@ export default function Interview({ st, onUpdate, onImmersive }) {
           <>
             <div className="mt-4 flex h-16 items-end gap-1.5" aria-label="Recent scores">
               {recent.map((x) => (
-                <i key={x.id} title={`${x.score}%`} className="block flex-1 rounded-md bg-periwinkle-strong" style={{ height: `${Math.max(8, x.score)}%` }} />
+                <i key={x.id} title={`${x.score}%`} className="block flex-1 rounded-md bg-azure" style={{ height: `${Math.max(8, x.score)}%` }} />
               ))}
             </div>
             <ul className="mt-3 flex flex-col divide-y divide-line">
@@ -191,13 +215,13 @@ export default function Interview({ st, onUpdate, onImmersive }) {
                     </span>
                     <span className="block text-[12px] font-medium text-muted-foreground">{when(x.date)} · {x.count} questions{x.minutes ? ` · ${x.minutes} min` : ''}</span>
                   </span>
-                  <span className="text-base font-bold">{x.score}%</span>
+                  <span className="text-base font-bold tabular-nums">{x.score}%</span>
                 </li>
               ))}
             </ul>
           </>
         )}
       </section>
-    </div>
+    </Stagger>
   );
 }

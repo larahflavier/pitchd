@@ -15,7 +15,7 @@ export default function Roadmap({ st }) {
     : [];
 
   return (
-    <section className="mb-3.5 flex flex-col gap-3">
+    <section className="flex flex-col gap-3">
       <div className="rounded-[32px] bg-periwinkle p-5 text-white">
         <p className="text-[13px] font-bold text-white/90">Your plan</p>
         <h2 className="mt-1 text-[22px] font-bold leading-tight tracking-tight">{p.label}</h2>

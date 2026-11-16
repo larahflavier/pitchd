@@ -22,7 +22,7 @@ import { PipProvider } from '@/lib/pip';
 import Onboarding from '@/components/Onboarding';
 import {
   TRACKS, loadState, refreshPlan, updateProfile, applyGoals, saveState, resetState, ensureToday, buildSet, buildCategorySet, dueIds, currentWeekly,
-  recordAnswer, completeDaily, buildQuickCheck, deckIds, toggleSaved, buildBonusQuestion, todayStr,
+  recordAnswer, completeDaily, buildQuickCheck, deckIds, toggleSaved, buildBonusQuestion, todayStr, byId, CAT_LABELS,
 } from '@/lib/engine';
 
 export default function Page() {
@@ -116,14 +116,15 @@ export default function Page() {
     setSession({ kind: 'extra', ids, reviewIds: dueIds(ref.current) });
   };
   const DECK_TITLES = { due: 'Due today', missed: 'Missed', saved: 'Saved', stories: 'My stories' };
-  const startDeck = (kind) => {
+  const startDeck = (kind, cat) => {
     if (kind === 'stories') {
       const items = storyCards(ref.current);
       if (items.length) setDeck({ title: DECK_TITLES.stories, ids: items.map((x) => x.id), items });
       return;
     }
-    const ids = deckIds(ref.current, kind);
-    if (ids.length) setDeck({ title: DECK_TITLES[kind], ids });
+    // the Missed list can study one category at a time
+    const ids = deckIds(ref.current, kind).filter((id) => !cat || byId[id]?.cat === cat);
+    if (ids.length) setDeck({ title: cat ? `${DECK_TITLES[kind]} · ${CAT_LABELS[cat]}` : DECK_TITLES[kind], ids });
   };
   const startReview = () => startDeck('due');
   const startWeekly = () => {
