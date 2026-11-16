@@ -4,7 +4,7 @@ import { X, Bookmark, Check, RotateCcw } from 'lucide-react';
 import Mascot from './Mascot';
 import { cn } from '@/lib/utils';
 import { byId, CAT_LABELS } from '@/lib/engine';
-import { play } from '@/lib/sound';
+import { play, vibrate } from '@/lib/sound';
 import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
 const SWIPE = 90; // px to drag before a swipe counts
@@ -36,11 +36,12 @@ export default function ReviewDeck({ title, ids, items = null, saved = [], onTog
   const grade = (got) => {
     if (leaving || !flipped || !q) return;
     onGrade(q.id, got);
-    play(got ? 'correct' : 'wrong');
+    play(got ? 'pop' : 'thud');
+    vibrate(got ? 10 : 20);
     setTally((t) => ({ got: t.got + (got ? 1 : 0), again: t.again + (got ? 0 : 1) }));
     const advance = () => { setI((n) => n + 1); setFlipped(false); setDx(0); setLeaving(null); };
     if (reduced) advance();
-    else { setLeaving(got ? 'right' : 'left'); setTimeout(advance, 180); }
+    else { setLeaving(got ? 'right' : 'left'); setTimeout(() => play('whoosh'), 40); setTimeout(advance, 180); }
   };
 
   const onDown = (e) => {

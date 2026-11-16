@@ -8,7 +8,7 @@ import { PRIMARY, SIZE } from './ui/button-styles';
 import { cn } from '@/lib/utils';
 import { spring } from '@/lib/motion';
 import { byId, shuffle, CAT_LABELS } from '@/lib/engine';
-import { play } from '@/lib/sound';
+import { play, vibrate } from '@/lib/sound';
 import { usePip } from '@/lib/pip';
 
 // Praise the method, not the person.
@@ -62,13 +62,16 @@ export default function Quiz({ ids, label, onAnswer, onFinish, onClose, reviewId
     const right = opt === q.a;
     const n = right ? combo + 1 : 0;
     setCombo(n);
-    play(right ? (n === 5 ? 'combo5' : n === 3 ? 'combo' : 'correct') : 'wrong');
+    // (setPicked and onAnswer above have already run, so nothing plays before the answer is registered)
+    play(right ? (n === 5 ? 'combo5' : n === 3 ? 'combo' : 'pop') : 'thud');
+    vibrate(right ? 10 : 20);
     // Pip reacts after the answer is already marked
     pip.react(right ? (n === 5 ? 'combo5' : n === 3 ? 'combo' : 'correct') : 'wrong');
   };
   const next = () => {
     pip.cancel(); // tapping Next ends any reaction right away
     window.scrollTo({ top: 0, behavior: 'auto' }); // the next question starts at the top
+    if (idx + 1 < ids.length) play('whoosh'); // the card flies off
     const r = [...results, { id: q.id, correct }];
     if (idx + 1 >= ids.length) return onFinish(r);
     setResults(r);

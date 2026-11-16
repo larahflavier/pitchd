@@ -42,7 +42,7 @@ export default function Summary({ kind, results, st, bonus, onOpenBonus, onHome,
 
   useEffect(() => {
     if (!daily && !(good && pct === 1)) return;
-    if (daily) { play('complete'); vibrate([40, 40, 80]); }
+    if (daily) { play('chime'); vibrate([40, 40, 80]); }
     // the ring finishes sweeping at about 0.6s, then it pops
     const t = setTimeout(() => {
       const r = ringRef.current?.getBoundingClientRect();

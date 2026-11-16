@@ -14,7 +14,7 @@ import Review from '@/components/Review';
 import Interview from '@/components/Interview';
 import Account from '@/components/Account';
 import SoundToggle from '@/components/SoundToggle';
-import { setSoundEnabled } from '@/lib/sound';
+import { setSoundEnabled, setHapticsEnabled } from '@/lib/sound';
 import { storyCards } from '@/lib/interview';
 import ReviewDeck from '@/components/ReviewDeck';
 import Splash from '@/components/Splash';
@@ -75,7 +75,11 @@ export default function Page() {
   });
 
   // keep the audio module in step with the saved setting (Account and the header both write it)
-  useEffect(() => { if (st) setSoundEnabled(st.sound !== false); }, [st?.sound]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!st) return;
+    setSoundEnabled(st.sound !== false);
+    setHapticsEnabled(st.haptics !== false);
+  }, [st?.sound, st?.haptics]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // every save: record new badges, and queue a pop-up for each level-up or badge
   const persist = (n) => {
@@ -272,7 +276,7 @@ export default function Page() {
      <PipProvider>
       <div className="app">
         {st.onboarded && !wip && (
-          <div className="relative z-30 -mb-1 flex justify-end">
+          <div className="pointer-events-none sticky top-2 z-30 -mb-1 flex justify-end">
             <SoundToggle on={st.sound !== false} onChange={(sound) => persist({ ...ref.current, sound })} />
           </div>
         )}

@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Lock, ChevronRight, Download, Trash2, Copy, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TRACKS, statsText, todayStr } from '@/lib/engine';
+import { play, vibrate, setSoundEnabled, setHapticsEnabled, canVibrate } from '@/lib/sound';
 import { SCHOOLS, YEARS, GOALS, INDUSTRIES, TIMELINES, MINUTES } from '@/lib/profile';
 import { PRIMARY, SECONDARY, SIZE } from './ui/button-styles';
 
@@ -40,7 +41,7 @@ function Chip({ on, onClick, children }) {
 function Switch({ on, onChange, label }) {
   return (
     <button role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)}
-      className={cn('relative h-7 w-12 shrink-0 rounded-full transition-colors motion-reduce:transition-none', on ? 'bg-ink' : 'bg-line')}>
+      className={cn('relative h-7 w-12 shrink-0 rounded-full transition-colors motion-reduce:transition-none', on ? 'bg-royal' : 'bg-line')}>
       <i className={cn('absolute top-0.5 size-6 rounded-full bg-surface transition-[left] motion-reduce:transition-none', on ? 'left-[22px]' : 'left-0.5')} />
     </button>
   );
@@ -56,6 +57,8 @@ export default function Account({ st, onPatch, onSaveGoals, onReset, onOpenWip }
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
   const [permNote, setPermNote] = useState('');
+  const [vibrates, setVibrates] = useState(true); // false on iPhones and desktops, which cannot vibrate from the browser
+  useEffect(() => { setVibrates(canVibrate()); }, []);
 
   const base = goalsOf(st);
   const changed = JSON.stringify(g) !== JSON.stringify(base);
@@ -185,10 +188,27 @@ export default function Account({ st, onPatch, onSaveGoals, onReset, onOpenWip }
         </label>
       </Section>
 
-      <Section title="Sound">
+      <Section title="Sound and haptics" hint="Sounds are short and only play after you answer. Muting is instant.">
         <div className="flex items-center justify-between">
           <span className="text-[15px] font-semibold">Sound effects</span>
-          <Switch on={st.sound} onChange={(on) => onPatch({ sound: on })} label="Sound effects" />
+          <Switch
+            on={st.sound}
+            onChange={(on) => { setSoundEnabled(on); if (on) play('on'); onPatch({ sound: on }); }}
+            label="Sound effects"
+          />
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <span>
+            <span className="block text-[15px] font-semibold">Haptics</span>
+            <span className="block text-[13px] font-medium text-muted-foreground">
+              {vibrates ? 'A tiny buzz when you answer.' : "Your browser can't vibrate this device. Android phones can."}
+            </span>
+          </span>
+          <Switch
+            on={st.haptics !== false && vibrates}
+            onChange={(on) => { if (!vibrates) return; setHapticsEnabled(on); if (on) vibrate(15); onPatch({ haptics: on }); }}
+            label="Haptics"
+          />
         </div>
       </Section>
 
